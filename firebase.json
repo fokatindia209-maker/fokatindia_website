@@ -1,0 +1,14 @@
+{
+  "hosting": [
+    {
+      "target": "admin",
+      "public": "apps/admin/dist",
+      "rewrites": [{ "source": "**", "destination": "/index.html" }]
+    },
+    {
+      "target": "user",
+      "public": "apps/user/dist",
+      "rewrites": [{ "source": "**", "destination": "/index.html" }]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "fokatindia-3fca6"
+  },
+  "targets": {
+    "fokatindia-3fca6": {
+      "hosting": {
+        "admin": [
+          "fokatindia-admin-e8c64"
+        ],
+        "user": [
+          "fokatindia-user-5f8ae"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
