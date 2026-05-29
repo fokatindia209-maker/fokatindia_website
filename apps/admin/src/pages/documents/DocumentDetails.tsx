@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-const API = "http://localhost:8001/restful/v1/api/documents";
-
+const API = import.meta.env.VITE_API_URL;
 export default function DocumentDetails() {
   const { id } = useParams();
   const [doc, setDoc] = useState<any>(null);
 
   const fetchDoc = async () => {
-    const res = await axios.get(`${API}/${id}`, {
+    const res = await axios.get(`${API}/restful/v1/api/documents/${id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },

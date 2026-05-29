@@ -8,7 +8,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Star } from "lucide-react";
 
-const API = "http://localhost:8001/restful/v1/api/reviews";
+const API = import.meta.env.VITE_API_URL;
 
 
 export default function EditReview() {
@@ -49,7 +49,7 @@ export default function EditReview() {
     try {
       setPageLoading(true);
 
-      const res = await axios.get(`${API}/${id}`, {
+      const res = await axios.get(`${API}/restful/v1/api/reviews/${id}`, {
         headers: {
          Authorization: `Bearer ${token}`,
         },
@@ -103,7 +103,7 @@ export default function EditReview() {
 
       console.log("UPDATE REVIEW PAYLOAD => ", payload);
 
-      await axios.put(`${API}/${id}`, payload, {
+      await axios.put(`${API}/restful/v1/api/reviews/${id}`, payload, {
         headers: {
          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

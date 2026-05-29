@@ -8,9 +8,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Star } from "lucide-react";
 
-const API = "http://localhost:8001/restful/v1/api/reviews";
 
 
+
+const API = import.meta.env.VITE_API_URL;
 export default function CreateReview() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -62,7 +63,7 @@ export default function CreateReview() {
 
       console.log("CREATE REVIEW PAYLOAD => ", payload);
 
-      await axios.post(API, payload, {
+      await axios.post(`${API}/restful/v1/api/reviews`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

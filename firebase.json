@@ -3,12 +3,18 @@
     {
       "target": "admin",
       "public": "apps/admin/dist",
-      "rewrites": [{ "source": "**", "destination": "/index.html" }]
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        { "source": "**", "destination": "/index.html" }
+      ]
     },
     {
       "target": "user",
       "public": "apps/user/dist",
-      "rewrites": [{ "source": "**", "destination": "/index.html" }]
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        { "source": "**", "destination": "/index.html" }
+      ]
     }
   ]
 }

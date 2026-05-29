@@ -1,15 +1,15 @@
 {
   "projects": {
-    "default": "fokatindia-3fca6"
+    "default": "fokatindia-21620"
   },
   "targets": {
-    "fokatindia-3fca6": {
+    "fokatindia-21620": {
       "hosting": {
         "admin": [
-          "fokatindia-admin-e8c64"
+          "fokatindia-admin-1d8cf"
         ],
         "user": [
-          "fokatindia-user-5f8ae"
+          "fokatindia-user-11e15"
         ]
       }
     }

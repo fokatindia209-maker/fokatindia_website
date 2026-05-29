@@ -3,8 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, User } from "lucide-react";
 
-const API = "http://localhost:8001/restful/v1/api";
-
+const API = import.meta.env.VITE_API_URL;
 interface SubVendor {
   name: string;
 }
@@ -24,7 +23,7 @@ export default function EditSubVendor() {
       setLoading(true);
 
       const res = await axios.get(
-        `${API}/subvendors/me`,
+        `${API}/restful/v1/api/subvendors/me`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -50,7 +49,7 @@ export default function EditSubVendor() {
       setLoading(true);
 
       await axios.put(
-        `${API}/subvendors/me`,
+        `${API}/restful/v1/api/subvendors/me`,
         {
           name: form.name,
         },

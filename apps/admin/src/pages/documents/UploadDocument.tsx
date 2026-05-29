@@ -9,9 +9,8 @@ import {
   Loader2,
 } from "lucide-react";
 
-const API =
-  "http://localhost:8001/restful/v1/api/documents/upload";
 
+const API = import.meta.env.VITE_API_URL;
 export default function UploadDocument() {
   const navigate = useNavigate();
 
@@ -72,7 +71,7 @@ export default function UploadDocument() {
         data.append("file", form.file);
       }
 
-      const res = await axios.post(API, data, {
+      const res = await axios.post(`${API}/restful/v1/api/documents/upload`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem(

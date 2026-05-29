@@ -2,11 +2,11 @@ importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js
 importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js");
 
 firebase.initializeApp({
-    apiKey: "AIzaSyBKxwuFR-YKU28l9UGy98wI8pXC7Hwvd3k",
-    authDomain: "fokatindia-3fca6.firebaseapp.com",
-    projectId: "fokatindia-3fca6",
-    messagingSenderId: "65383512746",
-    appId: "1:65383512746:web:76711eb55231286d596ed3"
+    apiKey: "AIzaSyDailC7nxUZjoRlPq1eMmNztHMbbhp9Stc",
+    authDomain: "fokatindia-21620.firebaseapp.com",
+    projectId: "fokatindia-21620",
+    messagingSenderId: "966340445316",
+    appId: "1:966340445316:web:ee63c89652b15fe340eed1"
 });
 
 

@@ -1,13 +1,13 @@
 {
   "name": "fokatindia",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+        "dev": "vite",
+    "build:admin": "vite build --config apps/admin/vite.config.ts",
+    "build:user": "vite build --config apps/user/vite.config.ts",
+    "build": "npm run build:admin && npm run build:user"
   },
   "dependencies": {
     "react": "^19.2.6",

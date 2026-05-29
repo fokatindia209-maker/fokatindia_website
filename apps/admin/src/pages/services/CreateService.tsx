@@ -7,8 +7,8 @@ import {
   Briefcase
 } from "lucide-react";
 
-const API = "http://localhost:8001/restful/v1/api/services";
 
+const API = import.meta.env.VITE_API_URL;
 export default function CreateService() {
   const navigate = useNavigate();
 
@@ -45,7 +45,7 @@ export default function CreateService() {
       setLoading(true);
 
       await axios.post(
-        API,
+        `${API}/restful/v1/api/services`,
         {
           categoryId: Number(form.categoryId),
           name: form.name,
