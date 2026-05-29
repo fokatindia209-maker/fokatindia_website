@@ -4,7 +4,7 @@
   "version": "1.0.1",
   "type": "module",
   "scripts": {
-        "dev": "vite",
+    "dev": "vite",
     "build:admin": "vite build --config apps/admin/vite.config.ts",
     "build:user": "vite build --config apps/user/vite.config.ts",
     "build": "npm run build:admin && npm run build:user"

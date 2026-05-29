@@ -73,17 +73,6 @@ export default function Register() {
         } finally {
             setSubmitting(false);
         }
-
-        // try {
-        //     await registerServiceVendor(values);
-
-        //     alert("Registered successfully");
-
-        //     navigate("/document_upload");
-
-        // } catch (error) {
-        //     alert("Registration failed");
-        // }
     };
 
     return (
