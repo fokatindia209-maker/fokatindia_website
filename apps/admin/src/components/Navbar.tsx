@@ -5,6 +5,7 @@ import {
   Search,
   LogOut,
 } from "lucide-react";
+import logo from "../assets/logo.png"
 
 import { useDispatch } from "react-redux";
 
@@ -84,10 +85,30 @@ export default function Navbar({
           </button>
 
           {/* LOGO */}
-          <div>
-            <h1 className="text-2xl font-bold text-blue-600">
-              FokatIndia
-            </h1>
+          <div
+            onClick={() => navigate("/dashboard")}
+            className="flex items-center gap-3 cursor-pointer"
+          >
+            <img
+              src={logo}
+              alt="FokatIndia"
+              className="
+      w-10 h-10
+      rounded-full
+      border border-blue-500
+      bg-blue-100
+      p-0.5
+      shadow-md shadow-blue-200
+      hover:shadow-lg hover:shadow-blue-300
+      transition-all duration-300
+    "
+            />
+
+            <div className="leading-tight">
+              <h1 className="text-xl md:text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
+                FokatIndia
+              </h1>
+            </div>
           </div>
         </div>
 

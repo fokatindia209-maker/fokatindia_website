@@ -7,8 +7,12 @@ const API = import.meta.env.VITE_API_URL;
 
 export default function CreateBooking() {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   const [users, setUsers] = useState<any[]>([]);
+  const [vendors, setVendors] = useState<any[]>([]);
+  const [subVendors, setSubVendors] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -35,38 +39,102 @@ export default function CreateBooking() {
     active: true,
   });
 
-  // ============================================
-  // FETCH USERS + SERVICES
-  // ============================================
-  const fetchData = async () => {
+  // ================= FETCH USERS + VENDORS =================
+  const fetchInitialData = async () => {
     try {
-      const [u, s] = await Promise.all([
+      const [u, v] = await Promise.all([
         axios.get(`${API}/restful/v1/api/users`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get(`${API}/restful/v1/api/services`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+        axios.get(`${API}/restful/v1/api/vendors/users`, {
+          headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
 
-      setUsers(u.data.data || u.data || []);
-      setServices(s.data.data || s.data || []);
+
+
+      setUsers(u.data.data || []);
+      setVendors(v.data.data || []);
+
+      console.log(v.data.data)
     } catch (err) {
       console.error(err);
     }
   };
 
   useEffect(() => {
-    fetchData();
+    fetchInitialData();
   }, []);
 
-  // ============================================
-  // SUBMIT BOOKING
-  // ============================================
+  // ================= VENDOR → SUBVENDOR =================
+  const onVendorChange = async (vendorId: string) => {
+    setForm({
+      ...form,
+      vendorId,
+      subVendorId: "",
+      categoryId: "",
+      serviceId: "",
+    });
+
+    console.log(vendorId)
+
+    try {
+      const res = await axios.get(
+        `${API}/restful/v1/api/subvendors/vendor/${vendorId}/users`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setSubVendors(res.data.data || []);
+      setCategories([]);
+      setServices([]);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // ================= SUBVENDOR → CATEGORY =================
+  const onSubVendorChange = async (subVendorId: string) => {
+    setForm({
+      ...form,
+      subVendorId,
+      categoryId: "",
+      serviceId: "",
+    });
+
+    try {
+      const res = await axios.get(
+        `${API}/restful/v1/api/categories/${subVendorId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setCategories(res.data.data || []);
+      setServices([]);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // ================= CATEGORY → SERVICE =================
+  const onCategoryChange = async (categoryId: string) => {
+    setForm({
+      ...form,
+      categoryId,
+      serviceId: "",
+    });
+
+    try {
+      const res = await axios.get(
+        `${API}/restful/v1/api/services?categoryId=${categoryId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setServices(res.data.data || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // ================= SUBMIT =================
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -74,30 +142,21 @@ export default function CreateBooking() {
       await axios.post(
         `${API}/restful/v1/api/bookings`,
         {
+          ...form,
           userId: Number(form.userId),
           vendorId: Number(form.vendorId),
           subVendorId: Number(form.subVendorId),
           categoryId: Number(form.categoryId),
           serviceId: Number(form.serviceId),
-          bookingDate: form.bookingDate,
-          bookingTime: form.bookingTime,
-          address: form.address,
-          city: form.city,
-          pincode: form.pincode,
           latitude: Number(form.latitude),
           longitude: Number(form.longitude),
           amount: Number(form.amount),
           discountAmount: Number(form.discountAmount),
           finalAmount: Number(form.finalAmount),
-          paymentStatus: form.paymentStatus,
-          bookingStatus: form.bookingStatus,
-          notes: form.notes,
-          otp: form.otp,
-          active: form.active,
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
@@ -114,31 +173,23 @@ export default function CreateBooking() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 flex items-center justify-center px-4">
-
+    <div className="min-h-screen bg-gray-100 py-12 flex justify-center px-4">
       <div className="w-full max-w-4xl bg-white shadow-xl rounded-2xl p-8">
 
         {/* HEADER */}
-        <div className="flex justify-between items-center mb-6">
-
+        <div className="flex justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              Create Booking
-            </h1>
-            <p className="text-gray-500">
-              Fill all required details
-            </p>
+            <h1 className="text-2xl font-bold">Create Booking</h1>
+            <p className="text-gray-500">Fill all required details</p>
           </div>
 
-          {/* BACK BUTTON */}
           <button
             onClick={() => navigate("/bookings")}
-            className="flex items-center gap-2 text-gray-600 hover:text-black"
+            className="flex items-center gap-2 text-gray-600"
           >
             <ArrowLeft size={18} />
             Back
           </button>
-
         </div>
 
         {/* FORM */}
@@ -159,9 +210,52 @@ export default function CreateBooking() {
             ))}
           </select>
 
+          {/* VENDOR */}
+          <select
+            className="border p-3 rounded-xl col-span-2"
+            value={form.vendorId}
+            onChange={(e) => onVendorChange(e.target.value)}
+          >
+            <option>Select Vendor</option>
+            {vendors.map((v) => (
+              <option key={v.vendorId} value={v.vendorId}>
+                {v.name}
+              </option>
+            ))}
+          </select>
+
+          {/* SUBVENDOR */}
+          <select
+            className="border p-3 rounded-xl col-span-2"
+            value={form.subVendorId}
+            onChange={(e) => onSubVendorChange(e.target.value)}
+          >
+            <option>Select Sub Vendor</option>
+            {subVendors.map((sv) => (
+              <option key={sv.subVendorId} value={sv.subVendorId}>
+                {sv.name}
+              </option>
+            ))}
+          </select>
+
+          {/* CATEGORY */}
+          <select
+            className="border p-3 rounded-xl col-span-2"
+            value={form.categoryId}
+            onChange={(e) => onCategoryChange(e.target.value)}
+          >
+            <option>Select Category</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+
           {/* SERVICE */}
           <select
             className="border p-3 rounded-xl col-span-2"
+            value={form.serviceId}
             onChange={(e) =>
               setForm({ ...form, serviceId: e.target.value })
             }
@@ -174,30 +268,7 @@ export default function CreateBooking() {
             ))}
           </select>
 
-          <input
-            placeholder="Vendor ID"
-            className="border p-3 rounded-xl"
-            onChange={(e) =>
-              setForm({ ...form, vendorId: e.target.value })
-            }
-          />
-
-          <input
-            placeholder="Sub Vendor ID"
-            className="border p-3 rounded-xl"
-            onChange={(e) =>
-              setForm({ ...form, subVendorId: e.target.value })
-            }
-          />
-
-          <input
-            placeholder="Category ID"
-            className="border p-3 rounded-xl"
-            onChange={(e) =>
-              setForm({ ...form, categoryId: e.target.value })
-            }
-          />
-
+          {/* OTHER FIELDS (UNCHANGED) */}
           <input
             type="date"
             className="border p-3 rounded-xl"
@@ -206,9 +277,17 @@ export default function CreateBooking() {
             }
           />
 
-          <input
-            placeholder="Booking Time (10:30 AM)"
+          {/* <input
+            placeholder="Booking Time"
             className="border p-3 rounded-xl"
+            onChange={(e) =>
+              setForm({ ...form, bookingTime: e.target.value })
+            }
+          /> */}
+          <input
+            type="time"
+            className="border p-3 rounded-xl"
+            value={form.bookingTime}
             onChange={(e) =>
               setForm({ ...form, bookingTime: e.target.value })
             }
@@ -235,22 +314,6 @@ export default function CreateBooking() {
             className="border p-3 rounded-xl"
             onChange={(e) =>
               setForm({ ...form, pincode: e.target.value })
-            }
-          />
-
-          <input
-            placeholder="Latitude"
-            className="border p-3 rounded-xl"
-            onChange={(e) =>
-              setForm({ ...form, latitude: e.target.value })
-            }
-          />
-
-          <input
-            placeholder="Longitude"
-            className="border p-3 rounded-xl"
-            onChange={(e) =>
-              setForm({ ...form, longitude: e.target.value })
             }
           />
 
@@ -286,11 +349,11 @@ export default function CreateBooking() {
             }
           />
 
-          {/* BUTTON */}
+          {/* SUBMIT */}
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="col-span-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl flex items-center justify-center gap-2"
+            className="col-span-2 bg-blue-600 text-white py-3 rounded-xl flex items-center justify-center gap-2"
           >
             <Save size={18} />
             {loading ? "Creating..." : "Create Booking"}
