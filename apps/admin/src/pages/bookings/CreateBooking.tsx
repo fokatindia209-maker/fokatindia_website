@@ -103,7 +103,7 @@ export default function CreateBooking() {
 
     try {
       const res = await axios.get(
-        `${API}/restful/v1/api/categories/${subVendorId}`,
+        `${API}/restful/v1/api/categories`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -138,6 +138,8 @@ export default function CreateBooking() {
   const handleSubmit = async () => {
     try {
       setLoading(true);
+
+      console.log("booking", form)
 
       await axios.post(
         `${API}/restful/v1/api/bookings`,
@@ -204,7 +206,7 @@ export default function CreateBooking() {
           >
             <option>Select User</option>
             {users.map((u) => (
-              <option key={u.id} value={u.id}>
+              <option key={u.userId} value={u.userId}>
                 {u.name}
               </option>
             ))}
@@ -277,13 +279,6 @@ export default function CreateBooking() {
             }
           />
 
-          {/* <input
-            placeholder="Booking Time"
-            className="border p-3 rounded-xl"
-            onChange={(e) =>
-              setForm({ ...form, bookingTime: e.target.value })
-            }
-          /> */}
           <input
             type="time"
             className="border p-3 rounded-xl"
