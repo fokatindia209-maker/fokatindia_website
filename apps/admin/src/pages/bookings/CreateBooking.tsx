@@ -279,6 +279,13 @@ export default function CreateBooking() {
             }
           />
 
+          {/* <input
+            placeholder="Booking Time"
+            className="border p-3 rounded-xl"
+            onChange={(e) =>
+              setForm({ ...form, bookingTime: e.target.value })
+            }
+          /> */}
           <input
             type="time"
             className="border p-3 rounded-xl"

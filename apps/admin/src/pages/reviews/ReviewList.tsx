@@ -1,6 +1,6 @@
 // ============================================
 // ReviewList.tsx
-// FULL CRUD UI - REVIEWS (WITH LOADER ROW)
+// FULL CRUD UI - REVIEWS (UPDATED)
 // ============================================
 
 import { useEffect, useMemo, useState } from "react";
@@ -23,11 +23,14 @@ interface Review {
   bookingId: number;
   userId: number;
   vendorId: number;
+  subVendorId: number;
+  categoryId: number;
   serviceId: number;
   rating: number;
   comment: string;
   active: boolean;
   createdAt: string;
+  updatedAt: string;
 }
 
 export default function ReviewList() {
@@ -43,9 +46,7 @@ export default function ReviewList() {
       setLoading(true);
 
       const res = await axios.get(`${API}/restful/v1/api/reviews`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data =
@@ -75,14 +76,9 @@ export default function ReviewList() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(
-        `${API}/restful/v1/api/reviews/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.delete(`${API}/restful/v1/api/reviews/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       fetchReviews();
     } catch (error) {
@@ -100,11 +96,24 @@ export default function ReviewList() {
         String(item.id).includes(text) ||
         String(item.userId).includes(text) ||
         String(item.vendorId).includes(text) ||
+        String(item.subVendorId).includes(text) ||
+        String(item.categoryId).includes(text) ||
         String(item.serviceId).includes(text) ||
         String(item.bookingId).includes(text)
       );
     });
   }, [reviews, search]);
+
+  const formatDate = (date?: string) => {
+    if (!date) return "-";
+    return new Date(date).toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 py-12">
@@ -122,7 +131,7 @@ export default function ReviewList() {
 
         <button
           onClick={() => navigate("/reviews/create")}
-          className="flex items-center gap-2 bg-black text-white px-5 py-3 rounded-xl hover:opacity-90"
+          className="flex items-center gap-2 bg-black text-white px-5 py-3 rounded-xl"
         >
           <Plus size={18} />
           Create Review
@@ -133,20 +142,19 @@ export default function ReviewList() {
       <div className="bg-white rounded-2xl shadow-sm p-4 mb-6">
         <div className="relative">
           <Search className="absolute left-3 top-3 text-gray-400" size={18} />
-
           <input
             type="text"
             placeholder="Search reviews..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-3"
+            className="w-full border rounded-xl pl-10 pr-4 py-3"
           />
         </div>
       </div>
 
       {/* TABLE */}
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full">
+      <div className="bg-white rounded-2xl shadow-sm  overflow-x-auto">
+        <table className="w-full min-w-[1200px]">
 
           <thead className="bg-gray-50 border-b">
             <tr className="text-left text-sm text-gray-600">
@@ -154,8 +162,12 @@ export default function ReviewList() {
               <th className="px-6 py-4">Booking</th>
               <th className="px-6 py-4">User</th>
               <th className="px-6 py-4">Vendor</th>
+              <th className="px-6 py-4">SubVendor</th>
+              <th className="px-6 py-4">Category</th>
               <th className="px-6 py-4">Service</th>
               <th className="px-6 py-4">Rating</th>
+              <th className="px-6 py-4">Created At</th>
+              <th className="px-6 py-4">Updated At</th>
               <th className="px-6 py-4">Comment</th>
               <th className="px-6 py-4">Status</th>
               <th className="px-6 py-4">Actions</th>
@@ -164,12 +176,12 @@ export default function ReviewList() {
 
           <tbody>
 
-            {/* ✅ LOADER ROW BELOW HEADER */}
+            {/* LOADER */}
             {loading && (
               <tr>
-                <td colSpan={9} className="p-8">
-                  <div className="flex items-center justify-center gap-2 text-blue-600">
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                <td colSpan={12} className="p-8 text-center">
+                  <div className="flex justify-center items-center gap-2 text-blue-600">
+                    <Loader2 className="animate-spin w-5 h-5" />
                     Loading reviews...
                   </div>
                 </td>
@@ -188,11 +200,24 @@ export default function ReviewList() {
                   <td className="px-6 py-4">{review.bookingId}</td>
                   <td className="px-6 py-4">{review.userId}</td>
                   <td className="px-6 py-4">{review.vendorId}</td>
+                  <td className="px-6 py-4">{review.subVendorId}</td>
+                  <td className="px-6 py-4">{review.categoryId}</td>
                   <td className="px-6 py-4">{review.serviceId}</td>
 
                   <td className="px-6 py-4 flex items-center gap-1">
-                    <Star size={16} className="text-yellow-400 fill-yellow-400" />
+                    <Star
+                      size={16}
+                      className="text-yellow-400 fill-yellow-400"
+                    />
                     {review.rating}
+                  </td>
+
+                  <td className="px-6 py-4 text-sm">
+                    {formatDate(review.createdAt)}
+                  </td>
+
+                  <td className="px-6 py-4 text-sm">
+                    {formatDate(review.updatedAt)}
                   </td>
 
                   <td className="px-6 py-4 max-w-xs truncate">
@@ -248,7 +273,7 @@ export default function ReviewList() {
             {/* EMPTY STATE */}
             {!loading && filteredReviews.length === 0 && (
               <tr>
-                <td colSpan={9} className="p-8 text-center text-gray-500">
+                <td colSpan={12} className="p-8 text-center text-gray-500">
                   No reviews found
                 </td>
               </tr>
