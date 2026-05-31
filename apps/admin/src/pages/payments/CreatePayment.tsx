@@ -129,7 +129,7 @@ export default function CreatePayment() {
           >
             <option value="">Select User</option>
             {users.map((u: any) => (
-              <option key={u.id} value={u.id}>
+              <option key={u.userId} value={u.userId}>
                 {u.name}
               </option>
             ))}
