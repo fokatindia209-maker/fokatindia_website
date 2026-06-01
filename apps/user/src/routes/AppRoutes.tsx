@@ -1,90 +1,59 @@
-import {
-    BrowserRouter,
-    Routes,
-    Route,
-    Navigate
-} from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import { useSelector } from "react-redux";
-import type { RootState } from "../store/store";
-
-import Login from "../pages/Login";
-import Register from "../pages/Register";
-import ForgotPassword from "../pages/ForgotPassword";
-import OtpLogin from "../pages/OtpLogin";
 import Dashboard from "../pages/Dashboard";
+import Categories from "../pages/Categories";
+import Services from "../pages/Services";
+import ServiceDetail from "../pages/ServiceDetail";
+import Booking from "../pages/Bookings";
+import Notifications from "../pages/Notifications";
+import Profile from "../pages/Profile";
+import Payment from "../pages/Payment";
+import OrderHistory from "../pages/OrderHistory";
+import SubVendors from "../pages/SubVendor";
+import SubVendorDetails from "../pages/SubVendorDetails";
 
-import ProtectedRoute from "../components/ProtectedRoute";
+// (future-ready pages)
+// import Bookings from "../pages/Bookings";
+// import Notifications from "../pages/Notifications";
+// import Profile from "../pages/Profile";
+// import ServiceDetail from "../pages/ServiceDetail";
 
 export default function AppRoutes() {
-
-    // ✅ USE REDUX (reactive)
-    const token = useSelector(
-        (state: RootState) => state.auth.token
-    );
-
     return (
+        <Routes>
 
-        <BrowserRouter>
+            {/* ================= ROOT ================= */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-            <Routes>
+            {/* ================= USER FLOW ================= */}
+            <Route path="/dashboard" element={<Dashboard />} />
 
-                {/* ROOT */}
-                <Route
-                    path="/"
-                    element={
-                        token
-                            ? <Navigate to="/dashboard" replace />
-                            : <Navigate to="/login" replace />
-                    }
-                />
+            <Route path="/categories" element={<Categories />} />
 
-                {/* LOGIN */}
-                <Route
-                    path="/login"
-                    element={
-                        token
-                            ? <Navigate to="/dashboard" replace />
-                            : <Login />
-                    }
-                />
+            {/* category filter supported */}
+            <Route path="/service/:id" element={<Services />} />
+            <Route path="/serviceDetails/:id" element={<ServiceDetail />} />
 
-                {/* REGISTER */}
-                <Route
-                    path="/register"
-                    element={<Register />}
-                />
 
-                {/* FORGOT */}
-                <Route
-                    path="/forgot-password"
-                    element={<ForgotPassword />}
-                />
+            <Route path="/booking/:id" element={<Booking />} />
+            <Route path="/payment/:id" element={<Payment />} />
 
-                {/* OTP */}
-                <Route
-                    path="/otp-login"
-                    element={<OtpLogin />}
-                />
+            <Route path="/notifications" element={<Notifications />} />
 
-                {/* DASHBOARD */}
-                <Route
-                    path="/dashboard"
-                    element={
-                        <ProtectedRoute>
-                            <Dashboard />
-                        </ProtectedRoute>
-                    }
-                />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/order_history" element={<OrderHistory />} />
+            <Route path="/subvendors/:id" element={<SubVendors />} />
+            <Route path="/subvendor/:id" element={<SubVendorDetails />} />
+            {/* ================= 404 fallback ================= */}
+            <Route
+                path="*"
+                element={
+                    <div className="p-10 text-center text-gray-500">
+                        Page Not Found
+                    </div>
+                }
+            />
 
-                {/* FALLBACK */}
-                <Route
-                    path="*"
-                    element={<Navigate to="/" replace />}
-                />
-
-            </Routes>
-
-        </BrowserRouter>
+        </Routes>
     );
 }
