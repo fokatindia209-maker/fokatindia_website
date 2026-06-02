@@ -15,11 +15,7 @@ export default function Payment() {
 
   return (
     <UserLayout>
-      <div className="max-w-xl mx-auto space-y-6">
-
-        <h1 className="text-2xl font-bold">
-          Payment
-        </h1>
+      <div className="max-w-xl mx-auto space-y-6 py-4 px-4">
 
         {/* ORDER SUMMARY */}
         <div className="bg-white p-4 rounded-xl shadow space-y-2">

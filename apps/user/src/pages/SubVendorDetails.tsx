@@ -1,6 +1,6 @@
 import UserLayout from "../components/UserLayout";
 import { useParams, useNavigate } from "react-router-dom";
-import { Star, ArrowLeft } from "lucide-react";
+import { Star } from "lucide-react";
 
 export default function SubVendorDetails() {
   const { id } = useParams();
@@ -24,16 +24,9 @@ export default function SubVendorDetails() {
 
   return (
     <UserLayout>
-      <div className="space-y-6 p-2">
+      <div className="space-y-6 py-4 px-4">
 
-        {/* BACK */}
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-gray-600"
-        >
-          <ArrowLeft size={18} />
-          Back
-        </button>
+
 
         {/* PROFILE CARD */}
         <div className="bg-white rounded-xl shadow p-5">

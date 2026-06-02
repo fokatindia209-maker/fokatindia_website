@@ -28,12 +28,9 @@ export default function Services() {
 
     return (
         <UserLayout>
-            <div className="space-y-6">
+            <div className="space-y-6 py-4 px-4">
 
-                {/* HEADER */}
-                <h1 className="text-2xl font-bold">
-                    Service {categoryId && `(Category ${categoryId})`}
-                </h1>
+           
 
                 {/* SEARCH */}
                 <div className="relative">

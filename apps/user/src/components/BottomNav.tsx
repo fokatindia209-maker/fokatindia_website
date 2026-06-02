@@ -12,9 +12,9 @@ export default function BottomNav() {
   const menus = [
     { title: "Home", icon: Home, path: "/dashboard" },
     { title: "Categories", icon: Grid3X3, path: "/categories" },
-    { title: "Bookings", icon: CalendarCheck, path: "/bookings" },
+    { title: "Order History", icon: CalendarCheck, path: "/order_history" },
     { title: "Notifications", icon: Bell, path: "/notifications" },
-    { title: "Profile", icon: User, path: "/profile" },
+    { title: "Setting", icon: User, path: "/settings" },
   ];
 
   return (

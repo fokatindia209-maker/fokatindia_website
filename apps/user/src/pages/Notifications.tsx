@@ -10,12 +10,9 @@ export default function Notifications() {
 
   return (
     <UserLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 py-4 px-4">
 
-        <h1 className="text-2xl font-bold">
-          Notifications
-        </h1>
-
+      
         <div className="space-y-3">
           {notifications.map((n) => (
             <div

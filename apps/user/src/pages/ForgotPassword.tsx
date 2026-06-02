@@ -52,7 +52,7 @@ export default function ForgotPassword() {
     return (
         <AuthLayout title="Forgot Password">
 
-            <div className="space-y-4">
+            <div className="space-y-4 ">
 
                 <p className="text-sm text-gray-500 text-center">
                     Enter your email and we’ll send you a reset link.

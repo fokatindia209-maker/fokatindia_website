@@ -22,13 +22,10 @@ export default function Categories() {
 
   return (
     <UserLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 py-4 px-4">
 
         {/* HEADER */}
-        <div className="flex items-center gap-2">
-  
-          <h1 className="text-2xl font-bold">Categories</h1>
-        </div>
+        
 
         {/* SEARCH */}
         <div className="relative">

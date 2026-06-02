@@ -28,7 +28,7 @@ export default function Dashboard() {
 
   return (
     <UserLayout>
-      <div className="space-y-4 p-3">
+      <div className="space-y-4 py-4 px-4">
 
         {/* ================= SEARCH ================= */}
         <div className="flex items-center bg-white rounded-xl shadow px-4 py-3">

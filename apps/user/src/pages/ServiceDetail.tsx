@@ -25,12 +25,9 @@ export default function ServiceDetail() {
 
   return (
     <UserLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 py-4 px-4">
 
-        {/* TITLE */}
-        <h1 className="text-2xl font-bold">
-          {service.name}
-        </h1>
+      
 
         {/* RATING */}
         <div className="flex items-center gap-2 text-yellow-500">

@@ -29,12 +29,9 @@ export default function Booking() {
 
   return (
     <UserLayout>
-      <div className="space-y-6 max-w-2xl mx-auto">
+      <div className="space-y-6 max-w-2xl mx-auto py-4 px-2">
 
-        {/* HEADER */}
-        <h1 className="text-2xl font-bold">
-          Confirm Booking
-        </h1>
+      
 
         {/* DATE */}
         <div>

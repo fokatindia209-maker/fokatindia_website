@@ -1,7 +1,11 @@
 import UserLayout from "../components/UserLayout";
 import { Calendar, CheckCircle, Clock, XCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function OrderHistory() {
+
+const navigate = useNavigate();
+
   const orders = [
     {
       id: 1,
@@ -56,12 +60,9 @@ export default function OrderHistory() {
 
   return (
     <UserLayout>
-      <div className="max-w-3xl mx-auto space-y-6">
+      <div className="max-w-3xl mx-auto space-y-6 py-4 px-4">
 
-        {/* HEADER */}
-        <h1 className="text-2xl font-bold">
-          Order History
-        </h1>
+    
 
         {/* ORDERS LIST */}
         <div className="space-y-4">
@@ -99,7 +100,9 @@ export default function OrderHistory() {
               {/* ACTIONS */}
               <div className="flex gap-3 mt-4">
 
-                <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <button 
+                onClick={() => navigate(`/order-details/${order.id}`)}
+                className="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                   View Details
                 </button>
 

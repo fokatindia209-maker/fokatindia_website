@@ -36,11 +36,9 @@ export default function SubVendors() {
 
   return (
     <UserLayout>
-      <div className="space-y-6 p-2">
+      <div className="space-y-6 py-4 px-4">
 
-        {/* TITLE */}
-        <h1 className="text-2xl font-bold">Sub Vendors</h1>
-
+      
         {/* SEARCH */}
         <div className="flex items-center bg-white rounded-xl shadow px-4 py-3">
           <Search size={18} className="text-gray-400" />
