@@ -1,14 +1,13 @@
 {
-  "name": "fokatindia",
+  "name": "partner",
   "private": true,
-  "version": "1.0.1",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build:admin": "vite build --config apps/admin/vite.config.ts",
-    "build:user": "vite build --config apps/user/vite.config.ts",
-    "build:partner": "vite build --config apps/partner/vite.config.ts",
-    "build": "npm run build:admin && npm run build:user && npm run build:partner"
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "^19.2.6",
