@@ -12,13 +12,4 @@ createRoot(document.getElementById('root')!).render(
             <App />
         </BrowserRouter>
     </React.StrictMode>
-    //    <StrictMode>
-
-    //         {/* <Provider store={store}> */}
-
-    //             <App />
-
-    //         {/* </Provider> */}
-
-    //     </StrictMode>
 )
