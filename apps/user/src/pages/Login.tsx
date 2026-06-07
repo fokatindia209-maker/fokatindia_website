@@ -2,20 +2,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-
 import { loginService } from "../services/authService";
 import { loginSuccess } from "../store/slices/authSlice";
 import type { AppDispatch } from "../store/store";
-
-import AuthLayout from "../components/AuthLayout";
 import Button from "../components/Button";
 import { generateFCMToken } from "../firebase";
-
+import AuthLayout from "../components/AuthLayout";
 interface LoginForm {
     email: string;
     password: string;
 }
-
 // ✅ Yup Validation Schema
 const validationSchema = Yup.object({
     email: Yup.string()
@@ -38,17 +34,12 @@ export default function Login() {
     };
 
     const handleSubmit = async (values: LoginForm, { setSubmitting, setFieldError }: any) => {
-
         try {
             let fcmToken = localStorage.getItem("fcmToken");
-
             if (!fcmToken) {
                 fcmToken = await generateFCMToken();
             }
-
             console.log("FCM TOKEN => ", fcmToken);
-
-
             const res = await loginService(
                 values.email,
                 values.password,
@@ -57,17 +48,11 @@ export default function Login() {
 
             dispatch(loginSuccess(res));
             navigate("/");
-
-
-
-
         } catch (err: any) {
-
             setFieldError(
                 "email",
                 err?.response?.data?.message || "Login failed"
             );
-
         } finally {
             setSubmitting(false);
         }
@@ -75,7 +60,6 @@ export default function Login() {
 
     return (
         <AuthLayout title="Welcome Back">
-
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}

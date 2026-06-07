@@ -1,198 +1,111 @@
 import {
-  Menu,
-  X,
+  Phone,
+  Home,
+  Grid3X3,
+  History,
   Bell,
-  Search,
-  LogOut,
+  ArrowLeft,
+  Settings,
 } from "lucide-react";
 import logo from "../assets/logo.png"
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
-import { useDispatch } from "react-redux";
-
-import { useNavigate } from "react-router-dom";
-
-import { logout } from "../store/slices/authSlice";
-
-import type { AppDispatch } from "../store/store";
-
-interface NavbarProps {
-
-  sidebarOpen: boolean;
-
-  setSidebarOpen: React.Dispatch<
-    React.SetStateAction<boolean>
-  >;
-}
-
-export default function Navbar({
-  sidebarOpen,
-  setSidebarOpen,
-}: NavbarProps) {
-
-  const dispatch = useDispatch<AppDispatch>();
-
+export default function Navbar() {
+  const location = useLocation();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const isDashboard = location.pathname === "/dashboard";
 
-    dispatch(logout());
-
-    navigate("/");
-  };
+  const menus = [
+    { title: "Home", icon: Home, path: "/dashboard" },
+    { title: "Categories", icon: Grid3X3, path: "/categories" },
+    { title: "Order History", icon: History, path: "/order_history" },
+    { title: "Notifications", icon: Bell, path: "/notifications" },
+  ];
 
   return (
+    <div className="fixed top-0 left-0 right-0 h-16 bg-white border-b shadow-sm flex items-center justify-between px-4 md:px-16 z-50">
 
-    <header
-      className="
-        fixed top-0 left-0 right-0 
-        bg-white border-b shadow-sm
-        z-40
-      "
-    >
+      {/* LEFT SIDE */}
+      <div className="flex items-center gap-0">
 
-      <div className="flex items-center justify-between px-4 md:px-6 py-4">
-
-        {/* LEFT */}
-        <div className="flex items-center gap-4">
-
-          {/* TOGGLE BUTTON */}
+        {/* Mobile & Tablet Only Back Button */}
+        {!isDashboard && (
           <button
-            onClick={() =>
-              setSidebarOpen((prev) => !prev)
-            }
-            className="
-              md:hidden
-              p-2 rounded-lg
-              hover:bg-gray-100
-              transition
-            "
+            onClick={() => navigate(-1)}
+            className="md:hidden p-2 rounded-full hover:bg-gray-100 transition"
           >
-
-            {sidebarOpen ? (
-              <X
-                size={28}
-                className="text-gray-700"
-              />
-
-            ) : (
-
-              <Menu
-                size={28}
-                className="text-gray-700"
-              />
-
-            )}
+            <ArrowLeft size={22} />
           </button>
+        )}
 
-          {/* LOGO */}
-          <div
-            onClick={() => navigate("/dashboard")}
-            className="flex items-center gap-3 cursor-pointer"
-          >
-            <img
-              src={logo}
-              alt="FokatIndia"
-              className="
-      w-10 h-10
-      rounded-full
-      border border-blue-500
-      bg-blue-100
-      p-0.5
-      shadow-md shadow-blue-200
-      hover:shadow-lg hover:shadow-blue-300
-      transition-all duration-300
-    "
-            />
+     
 
-            <div className="leading-tight">
-              <h1 className="text-xl md:text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
-                FokatIndia
-              </h1>
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT */}
-        <div className="flex items-center gap-4">
-
-          {/* SEARCH */}
-          <div
-            className="
-              hidden md:flex
-              items-center
-              bg-gray-100
-              px-3 py-2 rounded-xl
-            "
-          >
-
-            <Search
-              size={18}
-              className="text-gray-400"
-            />
-
-            <input
-              type="text"
-              placeholder="Search..."
-              className="
-                bg-transparent
-                outline-none
-                ml-2
-              "
-            />
-
-          </div>
-
-          {/* NOTIFICATION */}
-          <button className="relative">
-
-            <Bell className="text-gray-700" />
-
-            <span
-              className="
-                absolute -top-1 -right-1
-                bg-red-500 text-white
-                text-[10px]
-                px-1 rounded-full
-              "
-            >
-              2
-            </span>
-
-          </button>
-
-          {/* PROFILE */}
+        <NavLink
+          to="/dashboard"
+          className="flex items-center"
+        >
           <img
-            src="https://i.pravatar.cc/40"
-            alt="profile"
-            className="
-              w-10 h-10
-              rounded-full border
-            "
+            src={logo}
+            alt="FokatIndia"
+            className="mt-3 h-16 w-auto object-contain"
           />
 
-          {/* LOGOUT */}
-          <button
-            onClick={handleLogout}
-            className="
-              flex items-center gap-2
-              bg-red-500 hover:bg-red-600
-              text-white px-4 py-2
-              rounded-xl transition
-            "
-          >
-
-            <LogOut size={18} />
-
-            <span className="hidden md:block">
-              Logout
-            </span>
-
-          </button>
-
-        </div>
+          <span className="text-lg font-bold text-blue-600">
+            FokatIndia
+          </span>
+        </NavLink>
 
       </div>
 
-    </header>
+      {/* Desktop Menu */}
+      <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+        {menus.map((item) => {
+          const Icon = item.icon;
+
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex items-center gap-2 transition ${isActive
+                  ? "text-blue-600"
+                  : "hover:text-blue-600"
+                }`
+              }
+            >
+              <Icon size={16} />
+              <span>{item.title}</span>
+            </NavLink>
+          );
+        })}
+      </div>
+
+      {/* RIGHT SIDE */}
+      <div className="flex items-center gap-3">
+
+        {/* Settings - Desktop Only */}
+        <NavLink
+          to="/settings"
+          className="hidden md:flex items-center gap-2 text-gray-600 hover:text-blue-600 transition"
+        >
+          <Settings size={18} />
+        </NavLink>
+
+        {/* Call Button */}
+        <a
+          href="tel:+971000000000"
+          className="flex items-center gap-2 bg-blue-600 text-white px-3 md:px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition"
+        >
+          <Phone size={16} />
+
+          <span className="hidden sm:block">
+            Call Us
+          </span>
+        </a>
+
+      </div>
+
+    </div>
   );
 }

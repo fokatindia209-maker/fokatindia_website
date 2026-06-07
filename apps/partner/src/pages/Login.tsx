@@ -6,9 +6,8 @@ import * as Yup from "yup";
 import { loginService } from "../services/authService";
 import { loginSuccess } from "../store/slices/authSlice";
 import type { AppDispatch } from "../store/store";
-
-import AuthLayout from "../components/AuthLayout";
 import Button from "../components/Button";
+import AuthLayout from "../components/AuthLayout";
 // import { generateFCMToken } from "../firebase";
 
 interface LoginForm {

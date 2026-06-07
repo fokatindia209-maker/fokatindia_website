@@ -3,8 +3,8 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 import { forgotPasswordService } from "../services/authService";
-import AuthLayout from "../components/AuthLayout";
 import Button from "../components/Button";
+import AuthLayout from "../components/AuthLayout";
 
 interface ForgotForm {
     email: string;

@@ -1,503 +1,568 @@
-// ============================
-// AppRoutes.tsx
-// USING AdminLayout
-// ============================
-
 import {
-    BrowserRouter,
-    Routes,
-    Route,
-    Navigate,
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
 } from "react-router-dom";
 
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/store";
 
-// AUTH PAGES
+// AUTH
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import ForgotPassword from "../pages/ForgotPassword";
 import OtpLogin from "../pages/OtpLogin";
-
-// MAIN PAGES
-// import Dashboard from "../pages/dashboard/Dashboard";
 import DocumentUpload from "../pages/DocumentUpload";
 
-// SETTINGS PAGES
-// import Profile from "../pages/Settings/Profile";
+// VENDOR
+import VendorDashboard from "../pages/vendor/dashboard/VendorDashboard";
+import VendorSubVendorList from "../pages/vendor/subvendors/VendorSubVendorList";
+import VendorBookingList from "../pages/vendor/bookings/VendorBookingList";
+import VendorCategoryList from "../pages/vendor/categories/VendorCategoryList";
+import VendorServiceList from "../pages/vendor/services/VendorServiceList";
+import VendorEarnings from "../pages/vendor/earnings/VendorEarnings";
+import Notifications from "../pages/vendor/notifications/Notifications";
+import Reviews from "../pages/vendor/reviews/Reviews";
+import Reports from "../pages/vendor/reports/Reports";
+import VendorProfile from "../pages/vendor/profile/VendorProfile";
+import Settings from "../pages/vendor/setting/Settings";
+import VendorMore from "../pages/vendor/more/VendorMore";
 
-// // COMPONENTS
-// import ProtectedRoute from "../components/ProtectedRoute";
+// SUB VENDOR (you must create these pages)
+import SubVendorDashboard from "../pages/subvendor/dashboard/SubVendorDashboard";
+// import SubVendorJobs from "../pages/subvendor/jobs/SubVendorJobs";
+// import SubVendorEarnings from "../pages/subvendor/earnings/SubVendorEarnings";
 
-// LAYOUT
-// import Security from "../pages/Settings/Security";
-// import Notifications from "../pages/Settings/Notifications";
-// import Password from "../pages/Settings/Password";
-// import System from "../pages/Settings/System";
-// import Backup from "../pages/Settings/Backup";
-// import UsersList from "../pages/users/UsersList";
-// import VendorList from "../pages/vendors/VendorsList";
-// import CreateVendor from "../pages/vendors/CreateVendor";
-// import SubVendorList from "../pages/subvendors/SubVendorList";
-// import CreateSubVendor from "../pages/subvendors/CreateSubVendor";
-// import BookingList from "../pages/bookings/BookingList";
-// import CreateBooking from "../pages/bookings/CreateBooking";
-// import PaymentList from "../pages/payments/PaymentList";
-// import CreatePayment from "../pages/payments/CreatePayment";
-// import CreateCategory from "../pages/categories/CreateCategory";
-// import CategoryList from "../pages/categories/CategoryList";
-// import CreateService from "../pages/services/CreateService";
-// import ServiceList from "../pages/services/ServiceList";
-// import DocumentList from "../pages/documents/DocumentList";
-// import DocumentDetails from "../pages/documents/DocumentDetails";
-// import UploadDocument from "../pages/documents/UploadDocument";
-// import RoleList from "../pages/AccessManagement/Roles/RoleList";
-// import CreateRole from "../pages/AccessManagement/Roles/CreateRole";
-// import CreateUser from "../pages/users/CreateUser";
-// import EditUser from "../pages/users/EditUser";
-// import EditVendor from "../pages/vendors/EditVendor";
-// import PermissionsList from "../pages/AccessManagement/Permissions/PermissionList";
-// import CreatePermission from "../pages/AccessManagement/Permissions/PermissionCreate";
-// import EditPermission from "../pages/AccessManagement/Permissions/EditPermission";
-// import EditRole from "../pages/AccessManagement/Roles/EditRole";
-// import UserRoleList from "../pages/AccessManagement/UserRoles/UserRoleList";
-// import EditUserRole from "../pages/AccessManagement/UserRoles/EditUserRole";
-// import AssignUserRole from "../pages/AccessManagement/UserRoles/AssignUserRole";
-// import RolePermissionsList from "../pages/AccessManagement/RolePermissions/RolePermissionsList";
-// import EditRolePermissions from "../pages/AccessManagement/RolePermissions/EditRolePermissions";
-// import AssignRolePermissions from "../pages/AccessManagement/RolePermissions/AssignRolePermissions";
-// import EditService from "../pages/services/EditService";
-// import EditCategory from "../pages/categories/EditCategory";
-// import EditBooking from "../pages/bookings/EditBooking";
-// import EditSubVendor from "../pages/subvendors/EditSubVendor";
-// import EditPayment from "../pages/payments/EditPayment";
-// import NotificationList from "../pages/notifications/NotificationList";
-// import SendNotification from "../pages/notifications/SendNotifications";
-// import EditNotification from "../pages/notifications/EditNotifications";
-// import ReviewList from "../pages/reviews/ReviewList";
-// import CreateReview from "../pages/reviews/CreateReview";
-// import EditReview from "../pages/reviews/EditReview";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export default function AppRoutes() {
-    // REDUX
-    const token = useSelector(
-        (state: RootState) => state.auth.token
-    );
-
-    const user = useSelector(
-        (state: RootState) => state.auth.user
-    );
-
-    // LOCAL STORAGE FALLBACK
-    const localUser = JSON.parse(
-        localStorage.getItem("user") || "{}"
-    );
-
-    const documentStatus =
-        user?.documentStatus ||
-        localUser?.documentStatus;
-
-    return (
-        <BrowserRouter>
-            <Routes>
-                {/* ========================= */}
-                {/* ROOT REDIRECT */}
-                {/* ========================= */}
-
-                <Route
-                    path="/"
-                    element={
-                        !token ? (
-                            <Navigate
-                                to="/login"
-                                replace
-                            />
-                        ) : documentStatus !==
-                            "APPROVED" ? (
-                            <Navigate
-                                to="/document_upload"
-                                replace
-                            />
-                        ) : (
-                            <Navigate
-                                to="/dashboard"
-                                replace
-                            />
-                        )
-                    }
-                />
-
-                {/* ========================= */}
-                {/* LOGIN */}
-                {/* ========================= */}
-
-                <Route
-                    path="/login"
-                    element={
-                        token ? (
-                            documentStatus !==
-                                "APPROVED" ? (
-                                <Navigate
-                                    to="/document_upload"
-                                    replace
-                                />
-                            ) : (
-                                <Navigate
-                                    to="/dashboard"
-                                    replace
-                                />
-                            )
-                        ) : (
-                            <Login />
-                        )
-                    }
-                />
-
-                {/* ========================= */}
-                {/* REGISTER */}
-                {/* ========================= */}
-
-                <Route
-                    path="/register"
-                    element={<Register />}
-                />
-
-                {/* ========================= */}
-                {/* FORGOT PASSWORD */}
-                {/* ========================= */}
-
-                <Route
-                    path="/forgot-password"
-                    element={<ForgotPassword />}
-                />
-
-                {/* ========================= */}
-                {/* OTP LOGIN */}
-                {/* ========================= */}
-
-                <Route
-                    path="/otp-login"
-                    element={<OtpLogin />}
-                />
-
-                {/* ========================= */}
-                {/* DOCUMENT UPLOAD */}
-                {/* ========================= */}
-
-                <Route
-                    path="/document_upload"
-                    element={
-                        token ? (
-                            <DocumentUpload />
-                        ) : (
-                            <Navigate
-                                to="/login"
-                                replace
-                            />
-                        )
-                    }
-                />
-
-                {/* ========================= */}
-                {/* ADMIN LAYOUT ROUTES */}
-                {/* ========================= */}
-
-                {/* <Route
-                    element={
-                        <ProtectedRoute>
-                            {documentStatus ===
-                                "APPROVED" ? (
-                                <AdminLayout />
-                            ) : (
-                                <Navigate
-                                    to="/document_upload"
-                                    replace
-                                />
-                            )}
-                        </ProtectedRoute>
-                    }
-                >
-
-
-
-                    <Route
-                        path="/reviews/edit/:id"
-                        element={<EditReview />}
-                    />
-
-                    <Route
-                        path="/reviews/create"
-                        element={<CreateReview />}
-                    />
-
-                    <Route
-                        path="/reviews"
-                        element={<ReviewList />}
-                    />
-
-                    <Route
-                        path="/notifications/edit/:id"
-                        element={<EditNotification />}
-                    />
-
-                    <Route
-                        path="/notifications/send"
-                        element={<SendNotification />}
-                    />
-
-                    <Route
-                        path="/notifications"
-                        element={<NotificationList />}
-                    />
-
-
-                    <Route
-                        path="/role-permissions/assign"
-                        element={<AssignRolePermissions />}
-                    />
-
-
-                    <Route
-                        path="/role-permissions/edit/:id"
-                        element={<EditRolePermissions />}
-                    />
-
-
-
-
-                    <Route
-                        path="/role-permissions"
-                        element={<RolePermissionsList />}
-                    />
-
-
-                    <Route
-                        path="/user-roles/create"
-                        element={<AssignUserRole />}
-                    />
-
-                    <Route
-                        path="/user-roles/edit/:id"
-                        element={<EditUserRole />}
-                    />
-                    <Route
-                        path="/user-roles"
-                        element={<UserRoleList />}
-                    />
-
-
-
-
-
-                    <Route
-                        path="/roles/create"
-                        element={<CreateRole />}
-                    />
-
-                    <Route
-                        path="/roles/edit/:id"
-                        element={<EditRole />}
-                    />
-                    <Route
-                        path="/roles"
-                        element={<RoleList />}
-                    />
-
-                    <Route
-                        path="/permissions"
-                        element={<PermissionsList />}
-                    />
-
-                    <Route
-                        path="/permissions/create"
-                        element={<CreatePermission />}
-                    />
-
-                    <Route
-                        path="/permissions/edit/:permissionId"
-                        element={<EditPermission />}
-                    />
-
-
-
-                    <Route
-                        path="/roles/roleCreate"
-                        element={<CreateRole />}
-                    />
-
-
-
-
-                    <Route
-                        path="/kyc"
-                        element={<DocumentList />}
-                    />
-
-                    <Route
-                        path="/kyc/documentDetails"
-                        element={<DocumentDetails />}
-                    />
-
-                    <Route
-                        path="/kyc/documents/upload"
-                        element={<UploadDocument />}
-                    />
-
-
-                    <Route
-                        path="/services"
-                        element={<ServiceList />}
-                    />
-
-                    <Route
-                        path="/services/edit/:id"
-                        element={<EditService />}
-                    />
-
-                    <Route
-                        path="/services/create"
-                        element={<CreateService />}
-                    />
-                    <Route
-                        path="/categories"
-                        element={<CategoryList />}
-                    />
-
-                    <Route
-                        path="/categories/edit/:id"
-                        element={<EditCategory />}
-                    />
-
-                    <Route
-                        path="/categories/create"
-                        element={<CreateCategory />}
-                    />
-
-                    <Route
-                        path="/payments"
-                        element={<PaymentList />}
-                    />
-
-                    <Route
-                        path="/payments/edit/:id"
-                        element={<EditPayment />}
-                    />
-
-                    <Route
-                        path="/payments/create"
-                        element={<CreatePayment />}
-                    />
-
-                    <Route
-                        path="/bookings"
-                        element={<BookingList />}
-                    />
-
-                    <Route
-                        path="/bookings/edit/:id"
-                        element={<EditBooking />}
-                    />
-
-                    <Route
-                        path="/bookings/create"
-                        element={<CreateBooking />}
-                    />
-
-                    <Route
-                        path="/subvendors"
-                        element={<SubVendorList />}
-                    />
-
-                    <Route
-                        path="/subvendors/edit/:id"
-                        element={<EditSubVendor />}
-                    />
-
-                    <Route
-                        path="/subvendors/create"
-                        element={<CreateSubVendor />}
-                    />
-
-                    <Route
-                        path="/vendors"
-                        element={<VendorList />}
-                    />
-
-                    <Route
-                        path="/vendors/:id"
-                        element={<EditVendor />}
-                    />
-
-                    <Route
-                        path="/vendors/create"
-                        element={<CreateVendor />}
-                    />
-
-                    <Route
-                        path="/users"
-                        element={<UsersList />}
-                    />
-
-                    <Route
-                        path="/users/:userId"
-                        element={<EditUser />}
-                    />
-
-
-
-                    <Route
-                        path="/users/create"
-                        element={<CreateUser />}
-                    />
-                    <Route
-                        path="/dashboard"
-                        element={<Dashboard />}
-                    />
-
-                    <Route
-                        path="/settings/profile"
-                        element={<Profile />}
-                    />
-
-                    <Route
-                        path="/settings/security"
-                        element={<Security />}
-                    />
-
-                    <Route
-                        path="/settings/notifications"
-                        element={
-                            <Notifications />
-                        }
-                    />
-
-                    <Route
-                        path="/settings/password"
-                        element={<Password />}
-                    />
-
-                    <Route
-                        path="/settings/system"
-                        element={<System />}
-                    />
-
-                    <Route
-                        path="/settings/backup"
-                        element={<Backup />}
-                    />
-                </Route> */}
-
-                {/* ========================= */}
-                {/* FALLBACK */}
-                {/* ========================= */}
-
-                <Route
-                    path="*"
-                    element={
-                        <Navigate to="/" replace />
-                    }
-                />
-            </Routes>
-        </BrowserRouter>
-    );
+  const token = useSelector(
+    (state: RootState) => state.auth.token
+  );
+
+  const user = useSelector(
+    (state: RootState) => state.auth.user
+  );
+
+  const localToken = localStorage.getItem("token");
+
+  const localUser = JSON.parse(
+    localStorage.getItem("user") || "{}"
+  );
+
+  const isLoggedIn = !!(token || localToken);
+
+  const role =
+    user?.role || localUser?.role;
+
+  const documentStatus =
+    user?.documentStatus ||
+    localUser?.documentStatus;
+
+  return (
+    <BrowserRouter>
+      <Routes>
+
+        {/* ================= ROOT ================= */}
+        <Route
+          path="/"
+          element={
+            !isLoggedIn ? (
+              <Navigate to="/login" replace />
+            ) : documentStatus !== "APPROVED" ? (
+              <Navigate
+                to="/document_upload"
+                replace
+              />
+            ) : role === "SUB_VENDOR" ? (
+              <Navigate
+                to="/subvendor/dashboard"
+                replace
+              />
+            ) : (
+              <Navigate
+                to="/vendor/dashboard"
+                replace
+              />
+            )
+          }
+        />
+
+        {/* ================= LOGIN ================= */}
+        <Route
+          path="/login"
+          element={
+            !isLoggedIn ? (
+              <Login />
+            ) : documentStatus !== "APPROVED" ? (
+              <Navigate
+                to="/document_upload"
+                replace
+              />
+            ) : role === "SUB_VENDOR" ? (
+              <Navigate
+                to="/subvendor/dashboard"
+                replace
+              />
+            ) : (
+              <Navigate
+                to="/vendor/dashboard"
+                replace
+              />
+            )
+          }
+        />
+
+        <Route
+          path="/register"
+          element={<Register />}
+        />
+
+        <Route
+          path="/forgot-password"
+          element={<ForgotPassword />}
+        />
+
+        <Route
+          path="/otp-login"
+          element={<OtpLogin />}
+        />
+
+        {/* ================= DOCUMENT ================= */}
+        <Route
+          path="/document_upload"
+          element={
+            !isLoggedIn ? (
+              <Navigate to="/login" replace />
+            ) : (
+              <DocumentUpload />
+            )
+          }
+        />
+
+        {/* ===================================================== */}
+        {/* ================= VENDOR ROUTES ===================== */}
+        {/* ===================================================== */}
+
+        <Route
+          path="/vendor/dashboard"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <VendorDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/subvendors"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <VendorSubVendorList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/bookings"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <VendorBookingList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/categories"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <VendorCategoryList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/services"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <VendorServiceList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/earnings"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <VendorEarnings />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/notifications"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <Notifications />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/reviews"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <Reviews />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/reports"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <Reports />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/profile"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <VendorProfile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/settings"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/more"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <VendorMore />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ===================================================== */}
+        {/* ================= SUB VENDOR ROUTES ================= */}
+        {/* ===================================================== */}
+
+        <Route
+          path="/subvendor/dashboard"
+          element={
+            <ProtectedRoute allowedRole="SUB_VENDOR">
+              <SubVendorDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* <Route
+          path="/subvendor/jobs"
+          element={
+            <ProtectedRoute allowedRole="SUB_VENDOR">
+              <SubVendorJobs />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/subvendor/earnings"
+          element={
+            <ProtectedRoute allowedRole="SUB_VENDOR">
+              <SubVendorEarnings />
+            </ProtectedRoute>
+          }
+        /> */}
+
+        {/* ================= FALLBACK ================= */}
+        <Route
+          path="*"
+          element={<Navigate to="/" replace />}
+        />
+
+      </Routes>
+    </BrowserRouter>
+  );
 }
+// import {
+//     BrowserRouter,
+//     Routes,
+//     Route,
+//     Navigate,
+// } from "react-router-dom";
+
+// import { useSelector } from "react-redux";
+// import type { RootState } from "../store/store";
+
+// // AUTH PAGES
+// import Login from "../pages/Login";
+// import Register from "../pages/Register";
+// import ForgotPassword from "../pages/ForgotPassword";
+// import OtpLogin from "../pages/OtpLogin";
+// import DocumentUpload from "../pages/DocumentUpload";
+// import VendorDashboard from "../pages/vendor/dashboard/VendorDashboard";
+// import VendorSubVendorList from "../pages/vendor/subvendors/VendorSubVendorList";
+// import VendorBookingList from "../pages/vendor/bookings/VendorBookingList";
+// import VendorCategoryList from "../pages/vendor/categories/VendorCategoryList";
+// import VendorServiceList from "../pages/vendor/services/VendorServiceList";
+// import VendorEarnings from "../pages/vendor/earnings/VendorEarnings";
+// import Notifications from "../pages/vendor/notifications/Notifications";
+// import Reviews from "../pages/vendor/reviews/Reviews";
+// import Reports from "../pages/vendor/reports/Reports";
+// import VendorProfile from "../pages/vendor/profile/VendorProfile";
+// import Settings from "../pages/vendor/setting/Settings";
+// import VendorMore from "../pages/vendor/more/VendorMore";
+
+
+// export default function AppRoutes() {
+//     // REDUX
+//     const token = useSelector(
+//         (state: RootState) => state.auth.token
+//     );
+
+//     const user = useSelector(
+//         (state: RootState) => state.auth.user
+//     );
+
+//     const localToken =
+//         localStorage.getItem("token");
+
+//     // LOCAL STORAGE FALLBACK
+//     const localUser = JSON.parse(
+//         localStorage.getItem("user") || "{}"
+//     );
+
+//     const isLoggedIn = !!(
+//         token || localToken
+//     );
+
+//     const role =
+//         user?.role ||
+//         localUser?.role;
+
+//     const documentStatus =
+//         user?.documentStatus ||
+//         localUser?.documentStatus;
+
+
+//     return (
+//         <BrowserRouter>
+//             <Routes>
+
+//                 <Route
+//                     path="/"
+//                     element={
+//                         !isLoggedIn ? (
+//                             <Navigate
+//                                 to="/login"
+//                                 replace
+//                             />
+//                         ) : documentStatus !==
+//                             "APPROVED" ? (
+//                             <Navigate
+//                                 to="/document_upload"
+//                                 replace
+//                             />
+//                         ) : role ===
+//                             "SUB_VENDOR" ? (
+//                             <Navigate
+//                                 to="/subvendor/dashboard"
+//                                 replace
+//                             />
+//                         ) : (
+//                             <Navigate
+//                                 to="/vendor/dashboard"
+//                                 replace
+//                             />
+//                         )
+//                     }
+//                 />
+
+//                 <Route
+//                     path="/login"
+//                     element={
+//                         !isLoggedIn ? (
+//                             <Login />
+//                         ) : documentStatus !==
+//                             "APPROVED" ? (
+//                             <Navigate
+//                                 to="/document_upload"
+//                                 replace
+//                             />
+//                         ) : role ===
+//                             "SUB_VENDOR" ? (
+//                             <Navigate
+//                                 to="/subvendor/dashboard"
+//                                 replace
+//                             />
+//                         ) : (
+//                             <Navigate
+//                                 to="/vendor/dashboard"
+//                                 replace
+//                             />
+//                         )
+//                     }
+//                 />
+
+
+//                 <Route
+//                     path="/register"
+//                     element={<Register />}
+//                 />
+
+
+
+//                 <Route
+//                     path="/forgot-password"
+//                     element={<ForgotPassword />}
+//                 />
+
+
+
+//                 <Route
+//                     path="/otp-login"
+//                     element={<OtpLogin />}
+//                 />
+
+//                 <Route
+//                     path="/document_upload"
+//                     element={
+//                         !isLoggedIn ? (
+//                             <Navigate
+//                                 to="/login"
+//                                 replace
+//                             />
+//                         ) : (
+//                             <DocumentUpload />
+//                         )
+//                     }
+//                 />
+
+
+//                 <Route
+//                     path="/vendor/dashboard"
+//                     element={<VendorDashboard />}
+//                 />
+
+//                 <Route
+//                     path="/vendor/subvendors"
+//                     element={
+
+//                         <VendorSubVendorList />
+
+//                     }
+//                 />
+
+//                 <Route
+//                     path="/vendor/bookings"
+//                     element={
+
+//                         <VendorBookingList />
+
+//                     }
+//                 />
+
+//                 <Route
+//                     path="/vendor/categories"
+//                     element={
+
+//                         <VendorCategoryList />
+
+//                     }
+//                 />
+
+//                 <Route
+//                     path="/vendor/services"
+//                     element={
+
+//                         <VendorServiceList />
+
+//                     }
+//                 />
+
+
+//                 <Route
+//                     path="/vendor/earnings"
+//                     element={
+
+//                         <VendorEarnings />
+
+//                     }
+//                 />
+
+
+//                 <Route
+//                     path="/vendor/notifications"
+//                     element={
+
+//                         <Notifications />
+
+//                     }
+//                 />
+
+//                 <Route
+//                     path="/vendor/reviews"
+//                     element={
+
+//                         <Reviews />
+
+//                     }
+//                 />
+
+//                 <Route
+//                     path="/vendor/reports"
+//                     element={
+
+//                         <Reports />
+
+//                     }
+//                 />
+
+//                 <Route
+//                     path="/vendor/profile"
+//                     element={
+
+//                         <VendorProfile />
+
+//                     }
+//                 />
+
+//                 <Route
+//                     path="/vendor/settings"
+//                     element={
+
+//                         <Settings />
+
+//                     }
+//                 />
+
+//                 <Route
+//                     path="/vendor/more"
+//                     element={
+
+//                         <VendorMore />
+
+//                     }
+//                 />
+
+
+//                 <Route
+//                     path="*"
+//                     element={
+//                         <Navigate to="/" replace />
+//                     }
+//                 />
+//             </Routes>
+//         </BrowserRouter>
+//     );
+// }

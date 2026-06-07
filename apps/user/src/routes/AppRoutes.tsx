@@ -20,11 +20,6 @@ import ContentPage from "../pages/ContentPage";
 import Language from "../pages/Language";
 import ShareApp from "../pages/ShareApp";
 
-// (future-ready pages)
-// import Bookings from "../pages/Bookings";
-// import Notifications from "../pages/Notifications";
-// import Profile from "../pages/Profile";
-// import ServiceDetail from "../pages/ServiceDetail";
 
 export default function AppRoutes() {
     return (

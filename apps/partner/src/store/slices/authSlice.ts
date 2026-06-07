@@ -10,6 +10,7 @@ interface User {
     phone?: string;
     status?: string;
     token?: string;
+    role?: string; // ADD
     documentStatus?: string; // ✅ ADD THIS
 }
 
@@ -20,6 +21,8 @@ interface AuthState {
     token: string | null;
 
     isAuthenticated: boolean;
+
+    role: string | null;
 }
 
 // ===============================
@@ -41,6 +44,7 @@ const initialState: AuthState = {
     user,
     token: user?.token || null,
     isAuthenticated: !!user?.token,
+    role: user?.role || null,
 };
 
 const authSlice = createSlice({
@@ -59,6 +63,9 @@ const authSlice = createSlice({
             state.user = action.payload;
 
             state.token = action.payload.token || null;
+            state.role =
+                action.payload.role || null;
+
 
             state.isAuthenticated = true;
             // SAVE USER
@@ -80,6 +87,8 @@ const authSlice = createSlice({
         ) => {
             state.user = action.payload;
             state.token = action.payload.token || null;
+            state.role =
+                action.payload.role || null;
             state.isAuthenticated = true;
 
             localStorage.setItem("user", JSON.stringify(action.payload));
@@ -91,7 +100,7 @@ const authSlice = createSlice({
             state.user = null;
 
             state.token = null;
-
+            state.role = null;
             state.isAuthenticated = false;
 
             localStorage.removeItem("user");

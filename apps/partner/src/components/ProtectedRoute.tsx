@@ -1,47 +1,79 @@
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-
 import type { RootState } from "../store/store";
 import type { JSX } from "react";
 
 interface Props {
-    children: JSX.Element;
+  children: JSX.Element;
+  allowedRole?: "VENDOR" | "SUB_VENDOR";
 }
 
 export default function ProtectedRoute({
-    children
+  children,
+  allowedRole,
 }: Props) {
+  const token = useSelector(
+    (state: RootState) => state.auth.token
+  );
 
-    const token = useSelector(
-        (state: RootState) => state.auth.token
+  const user = useSelector(
+    (state: RootState) => state.auth.user
+  );
+
+  const localUser = JSON.parse(
+    localStorage.getItem("user") || "{}"
+  );
+
+  const localToken =
+    localStorage.getItem("token");
+
+  const isLoggedIn = !!(token || localToken);
+
+  const documentStatus =
+    user?.documentStatus ||
+    localUser?.documentStatus;
+
+  const role =
+    user?.role ||
+    localUser?.role;
+
+  // ❌ NOT LOGGED IN
+  if (!isLoggedIn) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
     );
+  }
 
-    const user = useSelector(
-        (state: RootState) => state.auth.user
+  // ❌ DOCUMENT NOT APPROVED (or missing)
+  if (documentStatus !== "APPROVED") {
+    return (
+      <Navigate
+        to="/document_upload"
+        replace
+      />
     );
+  }
 
-    const localUser = JSON.parse(
-        localStorage.getItem("user") || "{}"
+  // ❌ ROLE CHECK (Vendor/SubVendor protection)
+  if (
+    allowedRole &&
+    role !== allowedRole
+  ) {
+    return role === "SUB_VENDOR" ? (
+      <Navigate
+        to="/subvendor/dashboard"
+        replace
+      />
+    ) : (
+      <Navigate
+        to="/vendor/dashboard"
+        replace
+      />
     );
+  }
 
-    const localToken =
-        localStorage.getItem("token");
-
-    const documentStatus =
-        user?.documentStatus ||
-        localUser?.documentStatus;
-
-
-    // ❌ NOT LOGGED IN
-    if (!token && !localToken) {
-        return <Navigate to="/login" replace />;
-    }
-
-    // ❌ DOCUMENT NOT APPROVED → FORCE DOCUMENT PAGE
-    if (documentStatus && documentStatus !== "APPROVED") {
-        return <Navigate to="/document_upload" replace />;
-    }
-
-   
-    return children;
+  return children;
 }

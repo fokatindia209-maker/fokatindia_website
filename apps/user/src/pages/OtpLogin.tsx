@@ -8,8 +8,8 @@ import {
     verifyOtpService
 } from "../services/authService";
 
-import AuthLayout from "../components/AuthLayout";
 import Button from "../components/Button";
+import AuthLayout from "../components/AuthLayout";
 
 export default function OtpLogin() {
 
