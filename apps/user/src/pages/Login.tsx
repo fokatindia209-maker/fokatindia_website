@@ -47,7 +47,7 @@ export default function Login() {
             );
 
             dispatch(loginSuccess(res));
-            navigate("/");
+            navigate("/addresses");
         } catch (err: any) {
             setFieldError(
                 "email",
@@ -59,6 +59,7 @@ export default function Login() {
     };
 
     return (
+
         <AuthLayout title="Welcome Back">
             <Formik
                 initialValues={initialValues}
@@ -66,16 +67,14 @@ export default function Login() {
                 onSubmit={handleSubmit}
             >
                 {({ isSubmitting }) => (
-
                     <Form className="space-y-4">
 
-                        {/* Email */}
                         <div>
                             <Field
                                 name="email"
                                 type="email"
                                 placeholder="Email Address"
-                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="w-full px-4 py-3 border rounded-lg"
                             />
                             <ErrorMessage
                                 name="email"
@@ -84,13 +83,12 @@ export default function Login() {
                             />
                         </div>
 
-                        {/* Password */}
                         <div>
                             <Field
                                 name="password"
                                 type="password"
                                 placeholder="Password"
-                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="w-full px-4 py-3 border rounded-lg"
                             />
                             <ErrorMessage
                                 name="password"
@@ -99,26 +97,27 @@ export default function Login() {
                             />
                         </div>
 
-                        {/* Submit */}
                         <Button
                             type="submit"
-                            title={isSubmitting ? "Signing in..." : "Login"}
+                            title={isSubmitting ? "Signing In..." : "Login"}
                         />
 
-                    
-
-                        <div className="flex justify-between text-sm text-blue-600">
-                            <Link to="/otp-login" className="hover:underline">
+                        <div className="flex justify-between text-sm">
+                            <Link
+                                to="/otp-login"
+                                className="text-blue-600 hover:underline"
+                            >
                                 OTP Login
                             </Link>
 
-                            <Link to="/forgot-password" className="hover:underline">
+                            <Link
+                                to="/forgot-password"
+                                className="text-blue-600 hover:underline"
+                            >
                                 Forgot Password
                             </Link>
                         </div>
-
                     </Form>
-
                 )}
             </Formik>
 
@@ -131,7 +130,6 @@ export default function Login() {
                     Register
                 </Link>
             </p>
-
         </AuthLayout>
     );
 }

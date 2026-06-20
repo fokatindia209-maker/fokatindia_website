@@ -1,44 +1,92 @@
 import UserLayout from "../components/UserLayout";
-import { useNavigate } from "react-router-dom";
 import { Search, Star } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import api from "../api/axios";
+
+interface SubVendor {
+  subVendorId: number;
+  name: string;
+  specialization: string;
+  experienceYears: number;
+  rating: number;
+  availabilityStatus: string;
+}
 
 export default function SubVendors() {
   const navigate = useNavigate();
+  const { serviceId } = useParams();
+
   const [search, setSearch] = useState("");
+  const [subVendors, setSubVendors] = useState<SubVendor[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const subVendors = [
-    {
-      id: 1,
-      name: "Rahul Sharma",
-      description: "Expert in AC repair and cooling systems with 5+ years experience",
-      rating: 4.6,
-    },
-    {
-      id: 2,
-      name: "Amit Verma",
-      description: "Professional home cleaning specialist for deep cleaning services",
-      rating: 4.3,
-    },
-    {
-      id: 3,
-      name: "Suresh Yadav",
-      description: "Certified electrician for home and commercial electrical work",
-      rating: 4.8,
-    },
-  ];
+  const lat = 25.2048;
+  const lng = 55.2708;
 
-  const filtered = subVendors.filter(
-    (v) =>
-      v.name.toLowerCase().includes(search.toLowerCase()) ||
-      v.description.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => {
+    if (!serviceId) return;
+
+    const fetchSubVendors = async () => {
+      try {
+        setLoading(true);
+
+        const res = await api.get(`/subvendors/service/${serviceId}`, {
+          params: { lat, lng },
+        });
+
+        setSubVendors(res.data.data || []);
+      } catch (err) {
+        console.error("Error fetching subvendors:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubVendors();
+  }, [serviceId]);
+
+  const filtered = subVendors.filter((v) => {
+    const name = v.name?.toLowerCase() || "";
+    const spec = v.specialization?.toLowerCase() || "";
+
+    return (
+      name.includes(search.toLowerCase()) ||
+      spec.includes(search.toLowerCase())
+    );
+  });
+
+  const handleBook = (data: any) => {
+    const isLoggedIn = !!localStorage.getItem("token");
+
+
+    localStorage.setItem(
+      "vendorId",
+      data.vendorId.toString()
+    );
+    localStorage.setItem(
+      "subVendorId",
+      data.subVendorId.toString()
+    );
+    if (isLoggedIn) {
+      navigate("/addresses", {
+        state: {
+          subVendorId: data.subVendorId,
+        },
+      });
+    } else {
+      navigate("/login", {
+        state: {
+          redirectTo: `/booking/${data.subVendorId}`,
+        },
+      });
+    }
+  };
 
   return (
     <UserLayout>
       <div className="space-y-6 py-4 px-4">
 
-      
         {/* SEARCH */}
         <div className="flex items-center bg-white rounded-xl shadow px-4 py-3">
           <Search size={18} className="text-gray-400" />
@@ -50,60 +98,77 @@ export default function SubVendors() {
           />
         </div>
 
+        {/* LOADING */}
+        {loading && (
+          <div className="text-center text-gray-500 py-10">
+            Loading cleaners...
+          </div>
+        )}
+
         {/* LIST */}
-        <div className="space-y-3">
-          {filtered.map((v) => (
-            <div
-              key={v.id}
-              className="bg-white rounded-xl shadow p-4 hover:shadow-md transition"
-            >
+        {!loading && (
+          <div className="space-y-3">
+            {filtered.map((v) => (
+              <div
+                key={v.subVendorId}
+                className="bg-white rounded-xl shadow p-4 hover:shadow-md transition"
+              >
 
-              {/* NAME */}
-              <h2 className="font-semibold text-lg">
-                {v.name}
-              </h2>
+                <h2 className="font-semibold text-lg">{v.name}</h2>
 
-              {/* DESCRIPTION */}
-              <p className="text-sm text-gray-500 mt-1">
-                {v.description}
-              </p>
+                <p className="text-sm text-gray-500 mt-1">
+                  {v.specialization}
+                </p>
 
-              {/* RATING */}
-              <div className="flex items-center gap-1 text-yellow-500 text-sm mt-2">
-                <Star size={14} />
-                {v.rating}
+                <p className="text-xs text-gray-400 mt-1">
+                  {v.experienceYears} years experience
+                </p>
+
+                <div className="flex items-center gap-1 text-yellow-500 text-sm mt-2">
+                  <Star size={14} />
+                  {v.rating || 0}
+                </div>
+
+                <p className="text-xs mt-1">
+                  Status:{" "}
+                  <span
+                    className={
+                      v.availabilityStatus === "AVAILABLE"
+                        ? "text-green-600"
+                        : "text-red-500"
+                    }
+                  >
+                    {v.availabilityStatus}
+                  </span>
+                </p>
+
+                <div className="flex justify-end gap-2 mt-4">
+
+                  <button
+                    onClick={() =>
+                      navigate(`/subvendor/${v.subVendorId}`)
+                    }
+                    className="px-4 py-1 rounded-lg border text-sm hover:bg-gray-100"
+                  >
+                    View
+                  </button>
+
+                  <button
+                    onClick={() => handleBook(v)}
+                    className="px-4 py-1 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700"
+                  >
+                    Book
+                  </button>
+
+                </div>
+
               </div>
+            ))}
+          </div>
+        )}
 
-              {/* ACTIONS */}
-              <div className="flex justify-end gap-2 mt-4">
-
-                <button
-                  onClick={() =>
-                    navigate(`/subvendor/${v.id}`)
-                  }
-                  className="px-4 py-1 rounded-lg border text-sm hover:bg-gray-100"
-                >
-                  View
-                </button>
-
-                <button
-                  onClick={() =>
-                    // navigate(`/booking?subvendor=${v.id}`)
-                    navigate(`/booking/${v.id}`)
-                  }
-                  className="px-4 py-1 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700"
-                >
-                  Book
-                </button>
-
-              </div>
-
-            </div>
-          ))}
-        </div>
-
-        {/* EMPTY STATE */}
-        {filtered.length === 0 && (
+        {/* EMPTY */}
+        {!loading && filtered.length === 0 && (
           <div className="text-center text-gray-500 py-10">
             No Sub Vendors found
           </div>

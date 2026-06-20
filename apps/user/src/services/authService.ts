@@ -13,7 +13,7 @@ export const loginService = async (
 ) => {
 
     const response = await api.post(
-        "/restful/v1/api/users/login",
+        "/users/login",
         {
             email,
             password,
@@ -34,7 +34,7 @@ export const registerService = async (
 ) => {
 
     const response = await api.post(
-        "/restful/v1/api/users/register",
+        "/users/register",
         data
     );
 
@@ -49,7 +49,7 @@ export const forgotPasswordService =
     async (email: string) => {
 
         const response = await api.post(
-            "/restful/v1/api/users/forgot-password",
+            "/users/forgot-password",
             { email }
         );
 
@@ -65,7 +65,7 @@ export const sendOtpService = async (
 ) => {
 
     const response = await api.post(
-        "/restful/v1/api/users/send-otp",
+        "/users/send-otp",
         { mobile }
     );
 
@@ -82,7 +82,7 @@ export const verifyOtpService = async (
 ) => {
 
     const response = await api.post(
-        "/restful/v1/api/users/verify-otp",
+        "/users/verify-otp",
         {
             mobile,
             otp

@@ -1,20 +1,46 @@
 import UserLayout from "../components/UserLayout";
-import {  Search } from "lucide-react";
-import { useState } from "react";
+import { Search } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
+interface Category {
+  id: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+  slug: string;
+  active: boolean;
+}
 
 export default function Categories() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const categories = [
-    { id: 1, name: "Home Cleaning", icon: "🧹" },
-    { id: 2, name: "Plumbing", icon: "🔧" },
-    { id: 3, name: "Electrician", icon: "⚡" },
-    { id: 4, name: "AC Repair", icon: "❄️" },
-    { id: 5, name: "Salon at Home", icon: "💇" },
-    { id: 6, name: "Painting", icon: "🎨" },
-  ];
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await api.get("/categories");
+
+      setCategories(res.data.data || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  // const categories = [
+  //   { id: 1, name: "Home Cleaning", icon: "🧹" },
+  //   { id: 2, name: "Plumbing", icon: "🔧" },
+  //   { id: 3, name: "Electrician", icon: "⚡" },
+  //   { id: 4, name: "AC Repair", icon: "❄️" },
+  //   { id: 5, name: "Salon at Home", icon: "💇" },
+  //   { id: 6, name: "Painting", icon: "🎨" },
+  // ];
 
   const filtered = categories.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase())
@@ -24,12 +50,12 @@ export default function Categories() {
     <UserLayout>
       <div className="space-y-6 py-4 px-4">
 
-        {/* HEADER */}
-        
-
-        {/* SEARCH */}
+        {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-3 text-gray-400" size={18} />
+          <Search
+            className="absolute left-3 top-3 text-gray-400"
+            size={18}
+          />
 
           <input
             value={search}
@@ -39,26 +65,43 @@ export default function Categories() {
           />
         </div>
 
-        {/* GRID */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Loading */}
+        {loading ? (
+          <div className="text-center py-10">
+            Loading categories...
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {filtered.map((cat) => (
+              <div
+                key={cat.id}
+                onClick={() => {
+                  localStorage.setItem(
+                    "categoryId",
+                    cat.id.toString()
+                  );
 
-          {filtered.map((cat) => (
-            <div
-              key={cat.id}
-              onClick={() => navigate(`/service/${cat.id}`)}
-              className="bg-white rounded-2xl shadow hover:shadow-md transition cursor-pointer p-6 text-center"
-            >
-              <div className="text-4xl">{cat.icon}</div>
+                  navigate(`/service/${cat.id}`);
+                }}
+                // onClick={() => navigate(`/service/${cat.id}`)}
+                className="bg-white rounded-2xl shadow hover:shadow-md transition cursor-pointer p-4 text-center"
+              >
+                <img
+                  src={cat.imageUrl}
+                  alt={cat.name}
+                  className="w-20 h-20 mx-auto object-cover rounded-lg"
+                />
 
-              <p className="mt-3 font-semibold text-gray-700">
-                {cat.name}
-              </p>
-            </div>
-          ))}
-
-        </div>
-
+                <p className="mt-3 font-semibold text-gray-700">
+                  {cat.name}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+
+
     </UserLayout>
   );
 }
