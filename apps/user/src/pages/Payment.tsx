@@ -131,7 +131,7 @@ navigate("/dashboard", { replace: true });
 
   return (
     <UserLayout>
-      <div className="max-w-xl mx-auto py-4 px-4 space-y-6">
+      <div className="space-y-6 py-4 px-4">
 
         <div className="bg-white p-4 rounded-xl shadow">
           <h2 className="font-semibold mb-4">

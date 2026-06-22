@@ -46,7 +46,7 @@ export default function Footer() {
 
             <div className="flex items-center gap-2">
               <Phone size={16} />
-              +971 000 000 000
+              +91 000 000 000
             </div>
 
             <div className="flex items-center gap-2">
@@ -56,7 +56,7 @@ export default function Footer() {
 
             <div className="flex items-center gap-2">
               <MapPin size={16} />
-              Dubai, UAE
+              Delhi, India
             </div>
 
           </div>

@@ -82,7 +82,7 @@ export default function Booking() {
 
   return (
     <UserLayout>
-      <div className="max-w-2xl mx-auto py-4 px-4 space-y-6">
+      <div className="space-y-6 py-4 px-4">
 
         <h1 className="text-2xl font-bold">
           Confirm Booking

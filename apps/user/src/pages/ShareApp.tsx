@@ -1,31 +1,51 @@
 import UserLayout from "../components/UserLayout";
+import { Share2 } from "lucide-react";
 
 export default function ShareApp() {
-  const shareLink = "https://fokatindia.com";
+  const appLink = "https://fokatindia.com";
 
-  const copy = () => {
-    navigator.clipboard.writeText(shareLink);
-    alert("Copied");
+  const handleShare = async () => {
+    if (navigator.share) {
+      await navigator.share({
+        title: "FokatIndia",
+        text: "Book trusted home services with FokatIndia.",
+        url: appLink,
+      });
+    } else {
+      navigator.clipboard.writeText(appLink);
+      alert("App link copied to clipboard!");
+    }
   };
 
   return (
     <UserLayout>
-      <div className="max-w-2xl mx-auto p-4">
-        <div className="bg-white rounded-xl shadow p-5">
+      <div className="space-y-6 py-4 px-4">
+        <div className="bg-white rounded-xl shadow p-6 text-center">
+          <div className="flex justify-center mb-4">
+            <Share2 size={50} className="text-blue-600" />
+          </div>
 
-          <h1 className="font-bold text-xl mb-4">
-            Share App
-          </h1>
+          <h1 className="text-2xl font-bold mb-3">Share FokatIndia</h1>
+
+          <p className="text-gray-600 mb-6">
+            Invite your friends and family to experience trusted home services
+            including Cleaning, Plumbing, Electrician, AC Repair, Salon, and
+            Painting services.
+          </p>
+
+          <div className="bg-gray-100 rounded-lg p-3 text-sm break-all mb-5">
+            {appLink}
+          </div>
 
           <button
-            onClick={copy}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+            onClick={handleShare}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition"
           >
-            Copy Link
+            Share App
           </button>
-
         </div>
       </div>
     </UserLayout>
   );
 }
+// 

@@ -74,7 +74,7 @@ export default function OrderHistory() {
 
   return (
     <UserLayout>
-      <div className="max-w-3xl mx-auto space-y-6 py-4 px-4">
+      <div className="space-y-6 py-4 px-4">
 
         <h1 className="text-2xl font-bold">
           Order History

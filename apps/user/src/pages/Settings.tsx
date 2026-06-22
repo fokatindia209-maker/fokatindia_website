@@ -11,24 +11,40 @@ import {
   ChevronRight,
   Share2,
   Info,
+  LogIn,
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+interface User {
+  name: string;
+  email: string;
+  phone: string;
+}
 
 export default function Settings() {
   const navigate = useNavigate();
 
-  const user = {
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "+971 000 000 000",
-  };
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
-  const stats = {
-    bookings: 12,
-    completed: 10,
-    reviews: 5,
-  };
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+  const userString = localStorage.getItem("user");
+
+  setIsLoggedIn(!!token);
+
+  if (userString) {
+    try {
+      setUser(JSON.parse(userString));
+    } catch (e) {
+      console.error("Invalid user in localStorage");
+      setUser(null);
+    }
+  }
+  }, []);
+
 
   const menuSections = [
     {
@@ -43,11 +59,9 @@ export default function Settings() {
           icon: MapPin,
           label: "Saved Addresses",
           path: "/addresses",
-        }
+        },
       ],
     },
-
- 
 
     {
       title: "Support",
@@ -120,80 +134,68 @@ export default function Settings() {
   ];
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    setIsLoggedIn(false);
+
     navigate("/login");
   };
 
   return (
     <UserLayout>
-      <div className="max-w-3xl mx-auto px-4 py-4 space-y-5">
+      <div className="space-y-6 py-4 px-4">
+        {/* PROFILE */}
+        {isLoggedIn && (
+          <div className="bg-white rounded-2xl shadow p-5">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold">
+                {user?.name.charAt(0)}
+              </div>
 
-        {/* PROFILE CARD */}
-        <div className="bg-white rounded-2xl shadow p-5">
+              <div>
+                <h2 className="font-bold text-lg">{user?.name}</h2>
 
-          <div className="flex items-center gap-4">
+                <p className="text-gray-500 text-sm">{user?.email}</p>
 
-            <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold">
-              {user.name.charAt(0)}
+                <p className="text-gray-500 text-sm">{user?.phone}</p>
+              </div>
             </div>
-
-            <div>
-              <h2 className="font-bold text-lg">
-                {user.name}
-              </h2>
-
-              <p className="text-gray-500 text-sm">
-                {user.email}
-              </p>
-
-              <p className="text-gray-500 text-sm">
-                {user.phone}
-              </p>
-            </div>
-
           </div>
-
-        </div>
+        )}
 
         {/* STATS */}
-        <div className="grid grid-cols-3 gap-3">
+        {/* {isLoggedIn && (
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-white rounded-xl shadow p-4 text-center">
+              <h3 className="text-xl font-bold text-blue-600">
+                {stats.bookings}
+              </h3>
+              <p className="text-sm text-gray-500">Bookings</p>
+            </div>
 
-          <div className="bg-white rounded-xl shadow p-4 text-center">
-            <h3 className="text-xl font-bold text-blue-600">
-              {stats.bookings}
-            </h3>
-            <p className="text-sm text-gray-500">
-              Bookings
-            </p>
+            <div className="bg-white rounded-xl shadow p-4 text-center">
+              <h3 className="text-xl font-bold text-green-600">
+                {stats.completed}
+              </h3>
+              <p className="text-sm text-gray-500">Completed</p>
+            </div>
+
+            <div className="bg-white rounded-xl shadow p-4 text-center">
+              <h3 className="text-xl font-bold text-yellow-500">
+                {stats.reviews}
+              </h3>
+              <p className="text-sm text-gray-500">Reviews</p>
+            </div>
           </div>
+        )} */}
 
-          <div className="bg-white rounded-xl shadow p-4 text-center">
-            <h3 className="text-xl font-bold text-green-600">
-              {stats.completed}
-            </h3>
-            <p className="text-sm text-gray-500">
-              Completed
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl shadow p-4 text-center">
-            <h3 className="text-xl font-bold text-yellow-500">
-              {stats.reviews}
-            </h3>
-            <p className="text-sm text-gray-500">
-              Reviews
-            </p>
-          </div>
-
-        </div>
-
-        {/* MENU SECTIONS */}
+        {/* MENU */}
         {menuSections.map((section) => (
           <div
             key={section.title}
             className="bg-white rounded-xl shadow overflow-hidden"
           >
-
             <div className="px-4 py-3 bg-gray-50 font-semibold text-gray-700">
               {section.title}
             </div>
@@ -219,177 +221,27 @@ export default function Settings() {
           </div>
         ))}
 
-        {/* LOGOUT */}
+        {/* LOGIN / LOGOUT */}
         <div className="bg-white rounded-xl shadow overflow-hidden">
-
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-4 text-red-600 hover:bg-red-50"
-          >
-            <LogOut size={18} />
-            Logout
-          </button>
-
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-4 py-4 text-red-600 hover:bg-red-50"
+            >
+              <LogOut size={18} />
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate("/login")}
+              className="w-full flex items-center gap-3 px-4 py-4 text-blue-600 hover:bg-blue-50"
+            >
+              <LogIn size={18} />
+              Login
+            </button>
+          )}
         </div>
-
       </div>
     </UserLayout>
   );
 }
-// import UserLayout from "../components/UserLayout";
-// import { User, Phone, Mail, MapPin, Settings, LogOut } from "lucide-react";
-// import { useState } from "react";
-
-// export default function Profile() {
-//   const [name, setName] = useState("John Doe");
-//   const [phone, setPhone] = useState("+971 000 000 000");
-//   const [email, setEmail] = useState("john@example.com");
-//   const [address, setAddress] = useState("Dubai, UAE");
-
-//   const stats = {
-//     bookings: 12,
-//     reviews: 5,
-//     completed: 10,
-//   };
-
-//   const handleSave = () => {
-//     alert("Profile Updated ✅");
-//   };
-
-//   const handleLogout = () => {
-//     alert("Logged out");
-//   };
-
-//   return (
-//     <UserLayout>
-//       <div className="max-w-2xl mx-auto space-y-6 py-4 px-4">
-
-    
-
-//         {/* PROFILE CARD */}
-//         <div className="bg-white p-5 rounded-xl shadow space-y-4">
-
-//           <div className="flex items-center gap-3">
-//             <div className="w-14 h-14 bg-blue-600 text-white flex items-center justify-center rounded-full text-xl font-bold">
-//               {name.charAt(0)}
-//             </div>
-
-//             <div>
-//               <h2 className="font-semibold text-lg">
-//                 {name}
-//               </h2>
-//               <p className="text-gray-500 text-sm">
-//                 User Account
-//               </p>
-//             </div>
-//           </div>
-
-//           {/* INPUTS */}
-//           <div className="space-y-3">
-
-//             <div className="flex items-center gap-2 border p-2 rounded-xl">
-//               <User size={16} />
-//               <input
-//                 value={name}
-//                 onChange={(e) => setName(e.target.value)}
-//                 className="w-full outline-none"
-//                 placeholder="Name"
-//               />
-//             </div>
-
-//             <div className="flex items-center gap-2 border p-2 rounded-xl">
-//               <Phone size={16} />
-//               <input
-//                 value={phone}
-//                 onChange={(e) => setPhone(e.target.value)}
-//                 className="w-full outline-none"
-//                 placeholder="Phone"
-//               />
-//             </div>
-
-//             <div className="flex items-center gap-2 border p-2 rounded-xl">
-//               <Mail size={16} />
-//               <input
-//                 value={email}
-//                 onChange={(e) => setEmail(e.target.value)}
-//                 className="w-full outline-none"
-//                 placeholder="Email"
-//               />
-//             </div>
-
-//             <div className="flex items-center gap-2 border p-2 rounded-xl">
-//               <MapPin size={16} />
-//               <input
-//                 value={address}
-//                 onChange={(e) => setAddress(e.target.value)}
-//                 className="w-full outline-none"
-//                 placeholder="Address"
-//               />
-//             </div>
-
-//           </div>
-
-//           {/* SAVE BUTTON */}
-//           <button
-//             onClick={handleSave}
-//             className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700"
-//           >
-//             Save Profile
-//           </button>
-
-//         </div>
-
-//         {/* STATS */}
-//         <div className="grid grid-cols-3 gap-3">
-
-//           <div className="bg-white p-4 rounded-xl shadow text-center">
-//             <h3 className="text-xl font-bold text-blue-600">
-//               {stats.bookings}
-//             </h3>
-//             <p className="text-sm text-gray-500">
-//               Bookings
-//             </p>
-//           </div>
-
-//           <div className="bg-white p-4 rounded-xl shadow text-center">
-//             <h3 className="text-xl font-bold text-green-600">
-//               {stats.completed}
-//             </h3>
-//             <p className="text-sm text-gray-500">
-//               Completed
-//             </p>
-//           </div>
-
-//           <div className="bg-white p-4 rounded-xl shadow text-center">
-//             <h3 className="text-xl font-bold text-yellow-500">
-//               {stats.reviews}
-//             </h3>
-//             <p className="text-sm text-gray-500">
-//               Reviews
-//             </p>
-//           </div>
-
-//         </div>
-
-//         {/* SETTINGS */}
-//         <div className="bg-white rounded-xl shadow divide-y">
-
-//           <button className="flex items-center gap-3 p-4 w-full text-left hover:bg-gray-50">
-//             <Settings size={18} />
-//             Settings
-//           </button>
-
-//           <button
-//             onClick={handleLogout}
-//             className="flex items-center gap-3 p-4 w-full text-left text-red-600 hover:bg-red-50"
-//           >
-//             <LogOut size={18} />
-//             Logout
-//           </button>
-
-//         </div>
-
-//       </div>
-//     </UserLayout>
-//   );
-// }
