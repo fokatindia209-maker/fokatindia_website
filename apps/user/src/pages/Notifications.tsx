@@ -1,7 +1,9 @@
 import UserLayout from "../components/UserLayout";
 import { Bell } from "lucide-react";
-
-export default function Notifications() {
+interface Props {
+  title: string;
+}
+export default function Notifications({ title }: Props) {
   const notifications = [
     { id: 1, title: "Booking Confirmed", desc: "Your AC service is confirmed" },
     { id: 2, title: "Vendor Assigned", desc: "Technician will arrive soon" },
@@ -11,8 +13,10 @@ export default function Notifications() {
   return (
     <UserLayout>
       <div className="space-y-6 py-4 px-4">
+        <h1 className="text-2xl font-bold mb-4">
+          {title}
+        </h1>
 
-      
         <div className="space-y-3">
           {notifications.map((n) => (
             <div

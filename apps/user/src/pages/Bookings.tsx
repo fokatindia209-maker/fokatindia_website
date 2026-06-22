@@ -33,22 +33,21 @@ export default function Booking() {
     }
 
     const user = JSON.parse(localStorage.getItem("user") || "{}");
-
     const bookingData = {
       userId: user.userId,
-      vendorId: vendorId,            
+      vendorId: vendorId,
       subVendorId: subVendorId,
-      categoryId: categoryId,       
+      categoryId: categoryId,
       serviceId: serviceId,
       addressId,
       bookingDate: date,
-      bookingTime: time + ":00", 
+      bookingTime: time + ":00",
       amount: price,
       discountAmount: 0,
       finalAmount: total,
       paymentStatus: "PENDING",
       bookingStatus: "PENDING",
-      otp: "0000",    
+      otp: "0000",
       active: true,
       notes,
     };
@@ -61,8 +60,18 @@ export default function Booking() {
       console.log("Booking Success:", res.data);
 
       alert("Booking Confirmed 🎉");
-
-      navigate(`/payment/${res.data.id}`);
+      navigate(`/payment/${res.data.data.id}`, {
+        state: {
+          bookingId: res.data.data.id,
+          userId: user.userId,
+          name: user.name,
+          email: user.email,
+          mobile: user.phone,
+          amount: price,
+          tax,
+          total,
+        },
+      });
     } catch (err) {
       console.error("Booking failed:", err);
       alert("Booking failed");
@@ -148,13 +157,13 @@ export default function Booking() {
           onClick={handleBooking}
           disabled={!addressId || loading}
           className={`w-full py-3 rounded-xl font-medium transition ${!addressId || loading
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700 text-white"
+            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+            : "bg-blue-600 hover:bg-blue-700 text-white"
             }`}
         >
           {loading ? "Booking..." : "Confirm Booking"}
         </button>
-      
+
       </div>
     </UserLayout>
   );

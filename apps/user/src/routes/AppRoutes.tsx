@@ -25,6 +25,7 @@ import OtpLogin from "../pages/OtpLogin";           // ✅ ADD
 import ForgotPassword from "../pages/ForgotPassword"; // ✅ ADD
 
 import ProtectedRoute from "../components/ProtectedRoute";
+import Notifications from "../pages/Notifications";
 
 export default function AppRoutes() {
   return (
@@ -116,7 +117,7 @@ export default function AppRoutes() {
       <Route path="/refund-policy" element={<ContentPage title="Refund Policy" />} />
       <Route path="/cancellation-policy" element={<ContentPage title="Cancellation Policy" />} />
       <Route path="/about-us" element={<ContentPage title="About Us" />} />
-
+      <Route path="/notifications" element={<Notifications title="Notifications" />} />
       {/* ================= 404 ================= */}
       <Route
         path="*"
