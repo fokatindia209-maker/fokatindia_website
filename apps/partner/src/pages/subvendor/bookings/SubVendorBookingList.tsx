@@ -31,9 +31,11 @@ export default function SubVendorBookingList() {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-
+    const user = JSON.parse(
+      localStorage.getItem("user") || "{}"
+    );
       const res = await axios.get(
-        `${API}/restful/v1/api/vendor/bookings`,
+        `${API}/restful/v1/api/bookings/subVendor/${user.subVendorId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

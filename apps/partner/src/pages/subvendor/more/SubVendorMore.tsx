@@ -1,5 +1,4 @@
 import {
-  FolderTree,
   Star,
   Bell,
   BarChart3,
@@ -12,11 +11,6 @@ import PartnerLayout from "../../../components/PartnerLayout";
 
 export default function SubVendorMore() {
   const menus = [
-    {
-      title: "Categories",
-      icon: FolderTree,
-      path: "/subvendor/categories",
-    },
     {
       title: "Reviews",
       icon: Star,
