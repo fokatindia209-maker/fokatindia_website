@@ -1,8 +1,8 @@
 import PartnerLayout from "../../../components/PartnerLayout";
 
-export default function Reports() {
+export default function SubReports() {
   return (
-    <PartnerLayout>
+    <PartnerLayout role="SUB_VENDOR">
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">
         Reports

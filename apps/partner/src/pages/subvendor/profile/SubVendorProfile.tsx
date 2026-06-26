@@ -10,11 +10,11 @@ const tabs = [
   "KYC",
 ];
 
-export default function VendorProfile() {
+export default function SubVendorProfile() {
   const [activeTab, setActiveTab] = useState("Overview");
 
   return (
-    <PartnerLayout>
+    <PartnerLayout role="SUB_VENDOR">
     <div className="p-6 max-w-7xl mx-auto">
 
       {/* HEADER */}

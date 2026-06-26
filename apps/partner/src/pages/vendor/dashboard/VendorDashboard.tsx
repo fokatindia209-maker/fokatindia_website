@@ -14,7 +14,7 @@ import PerformanceCard from "../../../components/PerformanceCard";
 
 export default function VendorDashboard() {
   return (
-    <PartnerLayout>
+    <PartnerLayout role="VENDOR">
       {/* HEADER */}
       <div className="p-4 space-y-6">
 

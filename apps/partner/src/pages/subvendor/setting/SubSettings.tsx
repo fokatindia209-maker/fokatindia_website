@@ -9,10 +9,12 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PartnerLayout from "../../../components/PartnerLayout";
+import { useDispatch } from "react-redux";
+import { logout as logoutAction } from "../../../store/slices/authSlice";
 
-export default function Settings() {
+export default function SubSettings() {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const [bookingNotification, setBookingNotification] =
     useState(true);
 
@@ -25,12 +27,12 @@ export default function Settings() {
   const [darkMode, setDarkMode] = useState(false);
 
   const logout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
-
+        dispatch(logoutAction());
+     navigate("/login", { replace: true });
+   };
+ 
   return (
-    <PartnerLayout>
+    <PartnerLayout role="SUB_VENDOR">
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
 
       {/* Header */}

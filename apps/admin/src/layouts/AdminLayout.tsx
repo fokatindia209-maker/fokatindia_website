@@ -22,8 +22,8 @@ export default function AdminLayout() {
 
       {/* NAVBAR */}
       <Navbar
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
+        //sidebarOpen={sidebarOpen}
+        //setSidebarOpen={setSidebarOpen}
       />
 
       {/* CONTENT */}

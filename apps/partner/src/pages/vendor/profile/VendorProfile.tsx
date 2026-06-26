@@ -14,7 +14,7 @@ export default function VendorProfile() {
   const [activeTab, setActiveTab] = useState("Overview");
 
   return (
-    <PartnerLayout>
+    <PartnerLayout role="VENDOR">
     <div className="p-6 max-w-7xl mx-auto">
 
       {/* HEADER */}

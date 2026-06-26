@@ -107,7 +107,7 @@ export default function OrderHistory() {
 
                 <div className="text-right">
                   <p className="font-bold text-green-600">
-                    ₹{order.amount}
+                    ₹{Number(order.amount).toFixed(2)}
                   </p>
 
                   {getStatusUI(order.paymentStatus)}

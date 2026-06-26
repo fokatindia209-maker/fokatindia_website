@@ -22,7 +22,7 @@ interface Booking {
   createdAt: string;
 }
 
-export default function VendorBookingList() {
+export default function SubVendorBookingList() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -54,7 +54,7 @@ export default function VendorBookingList() {
   }, []);
 
   return (
-    <PartnerLayout>
+    <PartnerLayout role="SUB_VENDOR">
       {/* HEADER */}
       <div className="p-4 space-y-6">
       <div className="mb-6">

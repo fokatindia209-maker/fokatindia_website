@@ -25,7 +25,6 @@ export default function Categories() {
   const fetchCategories = async () => {
     try {
       const res = await api.get("/categories");
-
       setCategories(res.data.data || []);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -33,14 +32,7 @@ export default function Categories() {
       setLoading(false);
     }
   };
-  // const categories = [
-  //   { id: 1, name: "Home Cleaning", icon: "🧹" },
-  //   { id: 2, name: "Plumbing", icon: "🔧" },
-  //   { id: 3, name: "Electrician", icon: "⚡" },
-  //   { id: 4, name: "AC Repair", icon: "❄️" },
-  //   { id: 5, name: "Salon at Home", icon: "💇" },
-  //   { id: 6, name: "Painting", icon: "🎨" },
-  // ];
+
 
   const filtered = categories.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase())

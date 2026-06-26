@@ -1,5 +1,4 @@
 import {
-  Users,
   FolderTree,
   Star,
   Bell,
@@ -11,47 +10,42 @@ import {
 import { Link } from "react-router-dom";
 import PartnerLayout from "../../../components/PartnerLayout";
 
-export default function VendorMore() {
+export default function SubVendorMore() {
   const menus = [
-    {
-      title: "Sub Vendors",
-      icon: Users,
-      path: "/vendor/subvendors",
-    },
     {
       title: "Categories",
       icon: FolderTree,
-      path: "/vendor/categories",
+      path: "/subvendor/categories",
     },
     {
       title: "Reviews",
       icon: Star,
-      path: "/vendor/reviews",
+      path: "/subvendor/reviews",
     },
     {
       title: "Reports",
       icon: BarChart3,
-      path: "/vendor/reports",
+      path: "/subvendor/reports",
     },
     {
       title: "Notifications",
       icon: Bell,
-      path: "/vendor/notifications",
+      path: "/subvendor/notifications",
     },
     {
       title: "Profile",
       icon: User,
-      path: "/vendor/profile",
+      path: "/subvendor/profile",
     },
     {
       title: "Settings",
       icon: Settings,
-      path: "/vendor/settings",
+      path: "/subvendor/settings",
     },
   ];
 
   return (
-    <PartnerLayout>
+    <PartnerLayout role="SUB_VENDOR">
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">
         More

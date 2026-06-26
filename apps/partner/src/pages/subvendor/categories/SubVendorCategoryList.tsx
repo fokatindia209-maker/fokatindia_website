@@ -15,7 +15,7 @@ interface Category {
   slug: string;
 }
 
-export default function VendorCategoryList() {
+export default function SubVendorCategoryList() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -46,7 +46,7 @@ export default function VendorCategoryList() {
   }, []);
 
   return (
-    <PartnerLayout>
+    <PartnerLayout role="SUB_VENDOR">
     <div className="py-10 px-4">
       {/* HEADER */}
       <div className="mb-6">

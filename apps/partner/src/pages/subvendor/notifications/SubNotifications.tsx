@@ -1,7 +1,7 @@
 import { Bell } from "lucide-react";
 import PartnerLayout from "../../../components/PartnerLayout";
 
-export default function Notifications() {
+export default function SubNotifications() {
   const notifications = [
     "New booking received",
     "Payment received ₹1500",
@@ -10,7 +10,7 @@ export default function Notifications() {
   ];
 
   return (
-    <PartnerLayout role="VENDOR">
+    <PartnerLayout role="SUB_VENDOR">
       <div className="p-6">
         <h1 className="text-2xl font-bold mb-6">Notifications</h1>
 

@@ -6,10 +6,10 @@ import {
 } from "lucide-react";
 import PartnerLayout from "../../../components/PartnerLayout";
 
-export default function VendorEarnings() {
+export default function SubVendorEarnings() {
   return (
 
-    <PartnerLayout>
+    <PartnerLayout role="SUB_VENDOR">
 
       <div className="p-4 space-y-6">
 

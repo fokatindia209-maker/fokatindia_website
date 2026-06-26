@@ -1,7 +1,7 @@
 import { Star } from "lucide-react";
 import PartnerLayout from "../../../components/PartnerLayout";
 
-export default function Reviews() {
+export default function SubReviews() {
   const reviews = [
     {
       id: 1,
@@ -20,7 +20,7 @@ export default function Reviews() {
   ];
 
   return (
-    <PartnerLayout>
+    <PartnerLayout role="SUB_VENDOR">
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Reviews</h1>
 

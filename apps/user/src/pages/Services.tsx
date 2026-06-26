@@ -12,6 +12,7 @@ interface Service {
     imageUrl: string;
     price: number;
     discountedPrice: number;
+    taxPercentage : number;
     rating: number;
     categoryId: number;
     categoryName: string;
@@ -119,17 +120,11 @@ export default function Services() {
                                 </div>
 
                                 <button
-                                    // onClick={(e) => {
-                                    //     e.stopPropagation();
-                                    //     navigate(`/subvendors/${service.id}`);
-                                    // }}
-
-
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         localStorage.setItem(
-                                            "serviceId",
-                                            service.id.toString()
+                                            "service",
+                                            JSON.stringify(service)
                                         );
 
                                         navigate(`/subvendors/${service.id}`);
@@ -150,66 +145,5 @@ export default function Services() {
                 )}
             </div>
         </UserLayout>
-        // <UserLayout>
-        //     <div className="space-y-6 py-4 px-4">
-
-
-
-        //         {/* SEARCH */}
-        //         <div className="relative">
-        //             <Search className="absolute left-3 top-3 text-gray-400" size={18} />
-
-        //             <input
-        //                 value={search}
-        //                 onChange={(e) => setSearch(e.target.value)}
-        //                 placeholder="Search services..."
-        //                 className="w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-        //             />
-        //         </div>
-
-        //         {/* SERVICES GRID */}
-        //         <div className="grid md:grid-cols-3 gap-4">
-
-        //             {filtered.map((service) => (
-        //                 <div
-        //                     key={service.id}
-        //                     onClick={() => navigate(`/serviceDetails/${service.id}`)}
-        //                     className="bg-white rounded-2xl shadow p-5 hover:shadow-md transition cursor-pointer"
-        //                 >
-        //                     <h3 className="font-semibold text-lg">
-        //                         {service.name}
-        //                     </h3>
-
-        //                     <div className="flex items-center gap-1 mt-2 text-yellow-500 text-sm">
-        //                         <Star size={16} />
-        //                         {service.rating}
-        //                     </div>
-
-        //                     <p className="text-green-600 font-bold mt-2">
-        //                         ₹{service.price}
-        //                     </p>
-
-        //                     <button
-        //                         onClick={(e) => {
-        //                             e.stopPropagation(); // important (card click conflict)
-
-        //                             navigate(`/subvendors/${service.id}`);
-        //                         }}
-        //                         className="mt-4 w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition"
-        //                     >
-        //                         View Available Experts
-        //                     </button>
-        //                 </div>
-        //             ))}
-
-        //         </div>
-        //         {filtered.length === 0 && (
-        //             <div className="text-center text-gray-500 py-10">
-        //                 No services found 😢
-        //             </div>
-        //         )}
-
-        //     </div>
-        // </UserLayout>
     );
 }
