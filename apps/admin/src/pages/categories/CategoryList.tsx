@@ -73,8 +73,45 @@ export default function CategoryList() {
         </button>
       </div>
 
-      {/* TABLE */}
-      <div className="bg-white shadow rounded-xl overflow-hidden">
+      {/* MOBILE CARDS */}
+      <div className="md:hidden space-y-3">
+        {loading && (
+          <div className="bg-white rounded-xl p-6 text-center text-gray-500">
+            <Loader2 className="w-5 h-5 animate-spin text-blue-600 mx-auto mb-2" />
+            Loading categories...
+          </div>
+        )}
+        {!loading && categories.length === 0 && (
+          <div className="bg-white rounded-xl p-6 text-center text-gray-500">No categories found</div>
+        )}
+        {!loading && categories.map((c) => (
+          <div key={c.id} className="bg-white rounded-xl shadow p-4 space-y-2">
+            <div className="flex items-center gap-3">
+              {c.imageUrl ? (
+                <img src={c.imageUrl} className="w-12 h-12 rounded-lg object-cover cursor-pointer" onClick={() => window.open(c.imageUrl, "_blank")} />
+              ) : (
+                <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 text-xs">No img</div>
+              )}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-gray-800 truncate">{c.name}</span>
+                  <span className={`ml-2 px-2 py-1 rounded text-xs shrink-0 ${c.active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{c.active ? "ACTIVE" : "INACTIVE"}</span>
+                </div>
+                <p className="text-xs text-gray-400 truncate">{c.slug} · Order {c.displayOrder}</p>
+              </div>
+            </div>
+            <div className="flex gap-2 pt-1">
+              <button onClick={() => navigate(`/categories/edit/${c.id}`)} className="px-3 py-1 bg-blue-500 text-white rounded text-sm">Edit</button>
+              <button onClick={() => deleteCategory(c.id)} disabled={deletingId === c.id} className="px-3 py-1 bg-red-600 text-white rounded text-sm disabled:opacity-50">
+                {deletingId === c.id ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* DESKTOP TABLE */}
+      <div className="hidden md:block bg-white shadow rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
 

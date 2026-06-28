@@ -85,7 +85,15 @@ export default function Login() {
         return;
       }
 
+      if (res.documentStatus === "PENDING") {
+        // First login after registration → profile setup; subsequent → document upload
+        const setupDone = localStorage.getItem("profileSetupDone");
+        navigate(setupDone ? "/document_upload" : "/profile_setup");
+        return;
+      }
+
       if (res.documentStatus !== "APPROVED") {
+        // REJECTED → straight to document re-upload
         navigate("/document_upload");
         return;
       }

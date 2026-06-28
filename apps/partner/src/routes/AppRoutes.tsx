@@ -10,6 +10,7 @@ import ForgotPassword from "../pages/ForgotPassword";
 import OtpLogin from "../pages/OtpLogin";
 import DocumentUpload from "../pages/DocumentUpload";
 import DocumentUnderReview from "../pages/DocumentUnderReview";
+import ProfileSetup from "../pages/ProfileSetup";
 
 // VENDOR
 import VendorDashboard from "../pages/vendor/dashboard/VendorDashboard";
@@ -70,7 +71,11 @@ export default function AppRoutes() {
         ? <Navigate to="/subvendor/dashboard" replace />
         : <Navigate to="/vendor/dashboard" replace />;
     }
-    // PENDING or REJECTED
+    // PENDING → profile setup (first time) then document upload
+    if (documentStatus === "PENDING" && !localStorage.getItem("profileSetupDone")) {
+      return <Navigate to="/profile_setup" replace />;
+    }
+    // REJECTED or PENDING (already set up) → document upload
     return <Navigate to="/document_upload" replace />;
   };
 
@@ -94,6 +99,25 @@ export default function AppRoutes() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route path="/otp-login" element={<OtpLogin />} />
+
+        {/* ================= PROFILE SETUP ================= */}
+        <Route
+          path="/profile_setup"
+          element={
+            !isLoggedIn ? (
+              <Navigate to="/login" replace />
+            ) : documentStatus === "APPROVED" ? (
+              getDocumentRedirect()
+            ) : documentStatus === "SUBMITTED" ? (
+              <Navigate to="/document_review" replace />
+            ) : documentStatus === "PENDING" ? (
+              <ProfileSetup />
+            ) : (
+              // REJECTED → skip setup, go to upload
+              <Navigate to="/document_upload" replace />
+            )
+          }
+        />
 
         {/* ================= DOCUMENT UPLOAD ================= */}
         <Route

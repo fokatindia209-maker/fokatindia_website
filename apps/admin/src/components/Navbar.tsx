@@ -5,7 +5,7 @@ import {
   Grid3X3,
   History,
   Bell,
-  ArrowLeft,
+  Menu,
   Settings,
   User,
   Shield,
@@ -29,7 +29,11 @@ const settingsItems = [
   { label: "Backup", icon: HardDrive, path: "/settings/backup" },
 ];
 
-export default function Navbar() {
+interface NavbarProps {
+  setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function Navbar({ setSidebarOpen }: NavbarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -39,7 +43,7 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const isDashboard = location.pathname === "/dashboard";
+  //const isDashboard = location.pathname === "/dashboard";
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -76,15 +80,15 @@ export default function Navbar() {
     <div className="fixed top-0 left-0 right-0 h-16 bg-white border-b shadow-sm flex items-center justify-between px-4 md:px-16 z-50">
 
       {/* LEFT SIDE */}
-      <div className="flex items-center gap-0">
-        {!isDashboard && (
-          <button
-            onClick={() => navigate(-1)}
-            className="md:hidden p-2 rounded-full hover:bg-gray-100 transition"
-          >
-            <ArrowLeft size={22} />
-          </button>
-        )}
+      <div className="flex items-center gap-1">
+        {/* Hamburger - mobile only */}
+        <button
+          onClick={() => setSidebarOpen((prev) => !prev)}
+          className="md:hidden p-2 rounded-full hover:bg-gray-100 transition"
+          aria-label="Toggle menu"
+        >
+          <Menu size={22} />
+        </button>
 
         <NavLink to="/dashboard" className="flex items-center">
           <img

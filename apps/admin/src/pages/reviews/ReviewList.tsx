@@ -145,8 +145,40 @@ export default function ReviewList() {
         </div>
       </div>
 
-      {/* TABLE */}
-      <div className="bg-white rounded-2xl shadow-sm  overflow-x-auto">
+      {/* MOBILE CARDS */}
+      <div className="md:hidden space-y-3">
+        {loading && (
+          <div className="bg-white rounded-2xl p-6 text-center text-gray-500">
+            <Loader2 className="w-5 h-5 animate-spin text-blue-600 mx-auto mb-2" />
+            Loading reviews...
+          </div>
+        )}
+        {!loading && filteredReviews.length === 0 && (
+          <div className="bg-white rounded-2xl p-6 text-center text-gray-500">No reviews found</div>
+        )}
+        {!loading && filteredReviews.map((review) => (
+          <div key={review.id} className="bg-white rounded-2xl shadow-sm p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1">
+                <Star size={14} className="text-yellow-400 fill-yellow-400" />
+                <span className="font-semibold">{review.rating}</span>
+              </div>
+              <span className={`px-2 py-1 rounded-full text-xs ${review.active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{review.active ? "Active" : "Inactive"}</span>
+            </div>
+            <p className="text-sm text-gray-700 line-clamp-2">{review.comment}</p>
+            <p className="text-xs text-gray-400">User: {review.userId} · Vendor: {review.vendorId} · #{review.id}</p>
+            <p className="text-xs text-gray-400">{formatDate(review.createdAt)}</p>
+            <div className="flex gap-2 pt-1">
+              <button onClick={() => navigate(`/reviews/view/${review.id}`)} className="p-2 bg-blue-100 rounded"><Eye size={14} /></button>
+              <button onClick={() => navigate(`/reviews/edit/${review.id}`)} className="p-2 bg-yellow-100 rounded"><Pencil size={14} /></button>
+              <button onClick={() => deleteReview(review.id)} className="p-2 bg-red-100 rounded"><Trash2 size={14} /></button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* DESKTOP TABLE */}
+      <div className="hidden md:block bg-white rounded-2xl shadow-sm overflow-x-auto">
         <table className="w-full min-w-[1200px]">
 
           <thead className="bg-gray-50 border-b">

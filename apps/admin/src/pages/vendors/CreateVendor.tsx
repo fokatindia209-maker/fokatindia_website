@@ -33,6 +33,7 @@ export default function CreateVendor() {
     try {
       setLoading(true);
 
+      // Step 1: Create user account — vendor profile is auto-created with minimal defaults
       const userRes = await api.post(`/restful/v1/api/users/admin/vendors`, {
         name: form.name,
         email: form.email,
@@ -40,18 +41,18 @@ export default function CreateVendor() {
         password: form.password,
       });
 
-      const userId = userRes.data?.data?.userId || userRes.data?.userId;
+      const vendorId = userRes.data?.data?.vendorId;
 
-      await api.post(`/restful/v1/api/vendors`, {
-        userId: Number(userId),
-        businessName: form.businessName,
-        gstNumber: form.gstNumber,
-        address: form.address,
-        city: form.city,
-        serviceArea: form.serviceArea,
-        kycStatus: form.kycStatus,
-        rating: Number(form.rating),
-      });
+      // Step 2: Update the auto-created vendor profile with the full business details
+      if (vendorId) {
+        await api.put(`/restful/v1/api/vendors/${vendorId}`, {
+          businessName: form.businessName,
+          gstNumber: form.gstNumber,
+          address: form.address,
+          city: form.city,
+          serviceArea: form.serviceArea,
+        });
+      }
 
       alert("Vendor created successfully");
       navigate("/vendors");

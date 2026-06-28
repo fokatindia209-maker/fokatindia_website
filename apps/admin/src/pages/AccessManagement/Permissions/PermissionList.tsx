@@ -106,10 +106,37 @@ export default function PermissionsList() {
       {/* LOADING */}
       {loading && <p>Loading...</p>}
 
-      {/* TABLE */}
+      {/* MOBILE CARDS */}
+      {!loading && (
+        <div className="md:hidden space-y-4">
+          {Object.entries(grouped).map(([module, items]: any) => (
+            <div key={module} className="bg-white shadow rounded-xl overflow-hidden">
+              <div className="p-3 border-b font-bold flex items-center gap-2 bg-gray-50">
+                <Shield size={16} /> {module}
+              </div>
+              <div className="divide-y">
+                {items.map((p: Permission) => (
+                  <div key={p.permissionId} className="p-3 space-y-1">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <KeyRound size={12} className="text-gray-500" /> {p.name}
+                    </div>
+                    <p className="text-xs text-gray-500">{p.description}</p>
+                    <div className="flex gap-2 pt-1">
+                      <button onClick={() => navigate(`/permissions/edit/${p.permissionId}`)} className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded text-xs">Edit</button>
+                      <button onClick={() => deletePermission(p.permissionId)} className="bg-red-100 text-red-700 px-3 py-1 rounded text-xs">Delete</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* DESKTOP TABLE */}
       {!loading &&
         Object.entries(grouped).map(([module, items]: any) => (
-          <div key={module} className="mb-6 bg-white shadow rounded-xl">
+          <div key={module} className="hidden md:block mb-6 bg-white shadow rounded-xl">
 
             <div className="p-4 border-b font-bold flex items-center gap-2">
               <Shield size={18} /> {module}
@@ -128,35 +155,13 @@ export default function PermissionsList() {
               <tbody>
                 {items.map((p: Permission) => (
                   <tr key={p.permissionId} className="border-t">
-
                     <td className="p-3">{p.permissionId}</td>
-
-                    <td className="p-3 flex items-center gap-2">
-                      <KeyRound size={14} /> {p.name}
-                    </td>
-
+                    <td className="p-3 flex items-center gap-2"><KeyRound size={14} /> {p.name}</td>
                     <td className="p-3">{p.description}</td>
-
                     <td className="p-3 flex gap-2">
-
-                      <button
-                        onClick={() =>
-                          navigate(`/permissions/edit/${p.permissionId}`)
-                        }
-                        className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded"
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        onClick={() => deletePermission(p.permissionId)}
-                        className="bg-red-100 text-red-700 px-3 py-1 rounded"
-                      >
-                        Delete
-                      </button>
-
+                      <button onClick={() => navigate(`/permissions/edit/${p.permissionId}`)} className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded">Edit</button>
+                      <button onClick={() => deletePermission(p.permissionId)} className="bg-red-100 text-red-700 px-3 py-1 rounded">Delete</button>
                     </td>
-
                   </tr>
                 ))}
               </tbody>

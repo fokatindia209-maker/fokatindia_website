@@ -76,8 +76,38 @@ export default function BookingList() {
         </button>
       </div>
 
-      {/* TABLE */}
-      <div className="overflow-x-auto bg-white rounded-xl shadow">
+      {/* MOBILE CARDS */}
+      <div className="md:hidden space-y-3">
+        {loading && (
+          <div className="bg-white rounded-xl p-6 text-center text-gray-500">
+            <Loader2 className="w-5 h-5 animate-spin text-blue-600 mx-auto mb-2" />
+            Loading bookings...
+          </div>
+        )}
+        {!loading && bookings.length === 0 && (
+          <div className="bg-white rounded-xl p-6 text-center text-gray-500">No bookings found</div>
+        )}
+        {!loading && bookings.map((b) => (
+          <div key={b.id} className="bg-white rounded-xl shadow p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-gray-800">{b.bookingCode}</span>
+              <span className={`px-2 py-1 rounded text-xs ${b.bookingStatus === "PENDING" ? "bg-yellow-100 text-yellow-700" : b.bookingStatus === "CONFIRMED" ? "bg-blue-100 text-blue-700" : b.bookingStatus === "COMPLETED" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{b.bookingStatus}</span>
+            </div>
+            <p className="text-sm text-gray-500">{b.bookingDate} {b.bookingTime}</p>
+            <div className="flex items-center gap-3 text-sm">
+              <span className="text-green-600 font-bold">₹{b.finalAmount}</span>
+              <span className={`px-2 py-1 rounded text-xs ${b.paymentStatus === "PAID" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{b.paymentStatus}</span>
+            </div>
+            <p className="text-xs text-gray-400">User: {b.userId} · Vendor: {b.vendorId}</p>
+            <div className="pt-1">
+              <button onClick={() => navigate(`/bookings/edit/${b.id}`)} className="px-3 py-1 bg-blue-500 text-white rounded text-sm">View/Edit</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* DESKTOP TABLE */}
+      <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow">
 
         <table className="min-w-[2600px] w-full text-sm">
 

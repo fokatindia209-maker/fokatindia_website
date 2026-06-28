@@ -37,15 +37,15 @@ export default function Register() {
     try {
       if (values.invitationCode && values.invitationCode.trim() !== "") {
         await registerServiceSubVendor(values);
-
-        alert("Sub Vendor Registered Successfully");
       } else {
         await registerServiceVendor(values);
-
-        alert("Vendor Registered Successfully");
       }
 
-      navigate("/");
+      // Clear any previous profile setup flag so the new account gets the setup step
+      localStorage.removeItem("profileSetupDone");
+
+      alert("Registration successful! Please log in to complete your profile.");
+      navigate("/login");
     } catch (error) {
       console.error(error);
       alert("Registration failed");

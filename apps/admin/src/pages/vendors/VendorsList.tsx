@@ -97,8 +97,40 @@ export default function VendorList() {
         </button>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto bg-white rounded-xl shadow">
+      {/* MOBILE CARDS */}
+      <div className="md:hidden space-y-3">
+        {loading && (
+          <div className="bg-white rounded-xl p-6 text-center text-gray-500">
+            <Loader2 className="w-5 h-5 animate-spin text-blue-600 mx-auto mb-2" />
+            Loading vendors...
+          </div>
+        )}
+        {!loading && vendors.length === 0 && (
+          <div className="bg-white rounded-xl p-6 text-center text-gray-500">No vendors found</div>
+        )}
+        {!loading && vendors.map((vendor) => (
+          <div key={vendor.vendorId} className="bg-white rounded-xl shadow p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-gray-800">{vendor.businessName || "-"}</span>
+              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${vendor.kycStatus === "APPROVED" ? "bg-green-100 text-green-700" : vendor.kycStatus === "REJECTED" ? "bg-red-100 text-red-700" : "bg-yellow-100 text-yellow-700"}`}>{vendor.kycStatus}</span>
+            </div>
+            <p className="text-sm text-gray-500">{vendor.city}{vendor.serviceArea ? ` · ${vendor.serviceArea}` : ""}</p>
+            <p className="text-sm text-gray-500">⭐ {vendor.rating ?? 0} · GST: {vendor.gstNumber || "-"}</p>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button onClick={() => navigate(`/vendors/${vendor.vendorId}`)} className="px-3 py-1 bg-blue-500 text-white rounded text-sm">Edit</button>
+              <button onClick={() => deactivateVendor(vendor.vendorId)} disabled={actionLoadingId === vendor.vendorId} className="px-3 py-1 bg-yellow-500 text-white rounded text-sm disabled:opacity-50">
+                {actionLoadingId === vendor.vendorId ? "Loading..." : "Deactivate"}
+              </button>
+              <button onClick={() => deleteVendor(vendor.vendorId)} disabled={actionLoadingId === vendor.vendorId} className="px-3 py-1 bg-red-500 text-white rounded text-sm disabled:opacity-50">
+                {actionLoadingId === vendor.vendorId ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* DESKTOP TABLE */}
+      <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow">
 
         <table className="min-w-[1400px] w-full text-sm">
 

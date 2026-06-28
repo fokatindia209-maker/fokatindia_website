@@ -107,8 +107,41 @@ export default function SubVendorList() {
         </button>
       </div>
 
-      {/* TABLE */}
-      <div className="overflow-x-auto bg-white rounded-xl shadow">
+      {/* MOBILE CARDS */}
+      <div className="md:hidden space-y-3">
+        {loading && (
+          <div className="bg-white rounded-xl p-6 text-center text-gray-500">
+            <Loader2 className="w-5 h-5 animate-spin text-blue-600 mx-auto mb-2" />
+            Loading sub vendors...
+          </div>
+        )}
+        {!loading && subVendors.length === 0 && (
+          <div className="bg-white rounded-xl p-6 text-center text-gray-500">No sub vendors found</div>
+        )}
+        {!loading && subVendors.map((c) => (
+          <div key={c.subVendorId} className="bg-white rounded-xl shadow p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-gray-800">{c.name || "-"}</span>
+              <span className={`px-2 py-1 rounded text-xs ${c.status === "ACTIVE" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{c.status || "-"}</span>
+            </div>
+            <p className="text-sm text-gray-500">{c.email || "-"} · {c.phone || "-"}</p>
+            <p className="text-sm text-gray-500">{c.specialization || "-"} · {c.experienceYears} yrs · ⭐ {c.rating}</p>
+            <span className={`inline-block px-2 py-1 rounded text-xs ${c.availabilityStatus === "AVAILABLE" ? "bg-green-100 text-green-700" : c.availabilityStatus === "BUSY" ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-700"}`}>{c.availabilityStatus}</span>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button onClick={() => navigate(`/subvendors/edit/${c.subVendorId}`)} className="px-3 py-1 bg-blue-500 text-white rounded text-sm">Edit</button>
+              <button onClick={() => deactivateSubVendor(c.subVendorId)} disabled={actionLoadingId === c.subVendorId} className="px-3 py-1 bg-yellow-500 text-white rounded text-sm disabled:opacity-50">
+                {actionLoadingId === c.subVendorId ? "Loading..." : "Deactivate"}
+              </button>
+              <button onClick={() => deleteSubVendor(c.subVendorId)} disabled={actionLoadingId === c.subVendorId} className="px-3 py-1 bg-red-500 text-white rounded text-sm disabled:opacity-50">
+                {actionLoadingId === c.subVendorId ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* DESKTOP TABLE */}
+      <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow">
 
         <table className="min-w-[2200px] w-full text-sm">
 

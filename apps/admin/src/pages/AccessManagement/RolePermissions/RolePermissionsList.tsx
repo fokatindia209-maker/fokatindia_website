@@ -108,9 +108,31 @@ export default function RolePermissionsList() {
         </div>
       )}
 
-      {/* TABLE */}
+      {/* MOBILE CARDS */}
       {!loading && (
-        <div className="bg-white shadow-lg rounded-2xl overflow-hidden">
+        <div className="md:hidden space-y-3">
+          {filtered.length === 0 ? (
+            <div className="bg-white rounded-2xl p-6 text-center text-gray-500">No Data Found</div>
+          ) : filtered.map((item) => (
+            <div key={item.id} className="bg-white rounded-2xl shadow p-4 space-y-2">
+              <div className="flex items-center gap-3 text-sm">
+                <div className="flex items-center gap-1"><Shield size={14} className="text-blue-600" /><span className="font-medium">Role {item.roleId}</span></div>
+                <span className="text-gray-300">·</span>
+                <div className="flex items-center gap-1"><KeyRound size={14} className="text-gray-500" /><span>Permission {item.permissionId}</span></div>
+              </div>
+              <p className="text-xs text-gray-400">ID: #{item.id}</p>
+              <div className="flex gap-2 pt-1">
+                <button onClick={() => navigate(`/role-permissions/edit/${item.id}`)} className="flex items-center gap-1 bg-yellow-100 text-yellow-700 px-3 py-1 rounded text-sm"><Pencil size={12} /> Edit</button>
+                <button onClick={() => remove(item.id)} className="flex items-center gap-1 bg-red-100 text-red-700 px-3 py-1 rounded text-sm"><Trash2 size={12} /> Remove</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* DESKTOP TABLE */}
+      {!loading && (
+        <div className="hidden md:block bg-white shadow-lg rounded-2xl overflow-hidden">
 
           <table className="w-full text-sm">
 
@@ -187,13 +209,11 @@ export default function RolePermissionsList() {
         </div>
       )}
 
-      {/* EMPTY */}
+      {/* EMPTY - desktop only */}
       {!loading && filtered.length === 0 && (
-        <div className="bg-white shadow rounded-2xl p-10 text-center mt-6">
+        <div className="hidden md:block bg-white shadow rounded-2xl p-10 text-center mt-6">
           <Shield size={50} className="mx-auto text-gray-300" />
-          <h2 className="mt-3 text-lg font-semibold text-gray-700">
-            No Data Found
-          </h2>
+          <h2 className="mt-3 text-lg font-semibold text-gray-700">No Data Found</h2>
           <p className="text-gray-500 text-sm">
             Assign permissions to roles to see records
           </p>

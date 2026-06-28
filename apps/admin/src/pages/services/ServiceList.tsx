@@ -77,7 +77,41 @@ export default function ServiceList() {
         </button>
       </div>
 
-      <div className="overflow-x-auto bg-white rounded shadow">
+      {/* MOBILE CARDS */}
+      <div className="md:hidden space-y-3">
+        {loading && (
+          <div className="bg-white rounded-xl p-6 text-center text-gray-500">
+            <Loader2 className="w-5 h-5 animate-spin text-blue-600 mx-auto mb-2" />
+            Loading services...
+          </div>
+        )}
+        {!loading && services.length === 0 && (
+          <div className="bg-white rounded-xl p-6 text-center text-gray-500">No services found</div>
+        )}
+        {!loading && services.map((s) => (
+          <div key={s.id} className="bg-white rounded-xl shadow p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-gray-800">{s.name}</span>
+              <span className={`px-2 py-1 rounded text-xs ${s.active ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>{s.active ? "ACTIVE" : "INACTIVE"}</span>
+            </div>
+            <p className="text-sm text-gray-500">{s.categoryName} · {s.serviceType}</p>
+            <div className="flex gap-3 text-sm">
+              <span className="text-gray-700">₹{s.price}</span>
+              <span className="text-green-600 font-semibold">₹{s.discountedPrice}</span>
+              <span className="text-gray-500">{s.durationMinutes} min</span>
+              <span className="text-yellow-600">{s.rating} ⭐</span>
+            </div>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button onClick={() => navigate(`/services/edit/${s.id}`)} className="px-3 py-1 bg-blue-500 text-white rounded text-sm">View/Edit</button>
+              <button onClick={() => deactivateService(s.id)} className="px-3 py-1 bg-yellow-500 text-white rounded text-sm">Deactivate</button>
+              <button onClick={() => deleteService(s.id)} className="px-3 py-1 bg-red-500 text-white rounded text-sm">Delete</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* DESKTOP TABLE */}
+      <div className="hidden md:block overflow-x-auto bg-white rounded shadow">
         <table className="w-full text-sm">
 
           <thead className="bg-gray-100">

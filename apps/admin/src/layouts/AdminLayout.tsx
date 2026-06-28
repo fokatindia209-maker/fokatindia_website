@@ -21,10 +21,7 @@ export default function AdminLayout() {
       />
 
       {/* NAVBAR */}
-      <Navbar
-        //sidebarOpen={sidebarOpen}
-        //setSidebarOpen={setSidebarOpen}
-      />
+      <Navbar setSidebarOpen={setSidebarOpen} />
 
       {/* CONTENT */}
       <main className="pt-20 md:ml-64 p-4 md:p-8">

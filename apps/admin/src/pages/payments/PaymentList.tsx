@@ -91,8 +91,36 @@ export default function PaymentList() {
         </div>
       </div>
 
-      {/* CARD WRAPPER */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      {/* MOBILE CARDS */}
+      <div className="md:hidden space-y-3">
+        {loading && (
+          <div className="bg-white rounded-xl p-6 text-center text-gray-500">
+            <Loader2 className="w-5 h-5 animate-spin text-blue-600 mx-auto mb-2" />
+            Loading payments...
+          </div>
+        )}
+        {!loading && payments.length === 0 && (
+          <div className="bg-white rounded-xl p-6 text-center text-gray-500">No payments found</div>
+        )}
+        {!loading && payments.map((p) => (
+          <div key={p.id} className="bg-white rounded-xl shadow p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-blue-600">₹{p.amount}</span>
+              <span className={`px-2 py-1 rounded-full text-xs ${statusColor(p.paymentStatus)}`}>{p.paymentStatus}</span>
+            </div>
+            <p className="text-sm text-gray-500">User: {p.userId} · Booking: {p.bookingId}</p>
+            <p className="text-sm text-gray-500">{p.paymentMethod} · {p.gateway}</p>
+            <p className="text-xs text-gray-400">{new Date(p.createdAt).toLocaleDateString()}</p>
+            <div className="flex gap-2 pt-1">
+              <button onClick={() => navigate(`/payments/edit/${p.id}`)} className="px-3 py-1 bg-blue-600 text-white rounded text-sm">View/Edit</button>
+              <button onClick={() => deletePayment(p.id)} className="px-3 py-1 bg-red-500 text-white rounded text-sm">Delete</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* DESKTOP TABLE */}
+      <div className="hidden md:block bg-white shadow rounded-lg overflow-hidden">
 
         {/* HEADER ROW */}
         <div className="grid grid-cols-11 bg-gray-100 text-xs font-semibold p-3">

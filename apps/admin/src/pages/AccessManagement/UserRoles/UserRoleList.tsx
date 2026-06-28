@@ -107,9 +107,33 @@ export default function UserRolesList() {
       {/* LOADING */}
       {loading && <p>Loading...</p>}
 
-      {/* TABLE */}
+      {/* MOBILE CARDS */}
       {!loading && (
-        <div className="bg-white shadow rounded-xl overflow-hidden">
+        <div className="md:hidden space-y-3">
+          {filtered.length === 0 ? (
+            <div className="bg-white rounded-xl p-6 text-center text-gray-500">No User Roles Found</div>
+          ) : filtered.map((item) => (
+            <div key={item.id} className="bg-white rounded-xl shadow p-4 space-y-2">
+              <div className="flex items-center gap-2 text-sm">
+                <Users size={14} className="text-gray-500" />
+                <span>User #{item.userId}</span>
+                <span className="text-gray-300">·</span>
+                <Shield size={14} className="text-blue-500" />
+                <span>Role #{item.roleId}</span>
+              </div>
+              <p className="text-xs text-gray-400">ID: {item.id}</p>
+              <div className="flex gap-2 pt-1">
+                <button onClick={() => navigate(`/user-roles/edit/${item.id}`)} className="flex items-center gap-1 bg-yellow-100 text-yellow-700 px-3 py-1 rounded text-sm"><Pencil size={12} /> Edit</button>
+                <button onClick={() => removeRole(item.id)} className="flex items-center gap-1 bg-red-100 text-red-700 px-3 py-1 rounded text-sm"><Trash2 size={12} /> Remove</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* DESKTOP TABLE */}
+      {!loading && (
+        <div className="hidden md:block bg-white shadow rounded-xl overflow-hidden">
 
           <table className="w-full text-sm">
 
@@ -176,16 +200,12 @@ export default function UserRolesList() {
         </div>
       )}
 
-      {/* EMPTY */}
+      {/* EMPTY - desktop only (mobile handled in cards) */}
       {!loading && filtered.length === 0 && (
-        <div className="bg-white shadow rounded-xl p-10 text-center mt-6">
+        <div className="hidden md:block bg-white shadow rounded-xl p-10 text-center mt-6">
           <Users size={50} className="mx-auto text-gray-300" />
-          <h2 className="mt-3 text-lg font-semibold text-gray-700">
-            No User Roles Found
-          </h2>
-          <p className="text-gray-500 text-sm">
-            Try assigning a role to a user
-          </p>
+          <h2 className="mt-3 text-lg font-semibold text-gray-700">No User Roles Found</h2>
+          <p className="text-gray-500 text-sm">Try assigning a role to a user</p>
         </div>
       )}
     </div>
