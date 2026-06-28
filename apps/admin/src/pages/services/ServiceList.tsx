@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 interface Service {
   id: number;
@@ -33,14 +31,7 @@ export default function ServiceList() {
     try {
       setLoading(true);
 
-      const res = await axios.get(
-        `${API}/restful/v1/api/services`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await api.get(`/restful/v1/api/services`);
 
       setServices(res.data.data || []);
     } catch (err) {
@@ -57,24 +48,15 @@ export default function ServiceList() {
   const deleteService = async (id: number) => {
     if (!confirm("Delete this service?")) return;
 
-    await axios.delete(`${API}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    await api.delete(`/restful/v1/api/services/${id}`);
 
     fetchServices();
   };
 
   const deactivateService = async (id: number) => {
-    await axios.put(
-      `${API}/${id}/deactivate`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
+    await api.put(
+      `/restful/v1/api/services/${id}/status`,
+      { active: false }
     );
 
     fetchServices();
@@ -115,7 +97,7 @@ export default function ServiceList() {
           </thead>
 
           <tbody>
-            {/* ✅ LOADER ROW (below header) */}
+            {/* LOADER ROW (below header) */}
             {loading && (
               <tr>
                 <td colSpan={11} className="p-6">

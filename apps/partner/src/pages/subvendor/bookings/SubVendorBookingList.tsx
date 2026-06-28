@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
   Loader2,
@@ -8,8 +7,7 @@ import {
   IndianRupee,
 } from "lucide-react";
 import PartnerLayout from "../../../components/PartnerLayout";
-
-const API = import.meta.env.VITE_API_URL;
+import api from "../../../api/axios";
 
 interface Booking {
   id: number;
@@ -31,18 +29,10 @@ export default function SubVendorBookingList() {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-    const user = JSON.parse(
-      localStorage.getItem("user") || "{}"
-    );
-      const res = await axios.get(
-        `${API}/restful/v1/api/bookings/subVendor/${user.subVendorId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const res = await api.get(
+        `/restful/v1/api/bookings/subVendor/${user.subVendorId}`
       );
-
       setBookings(res.data.data || []);
     } catch (err) {
       console.error(err);
@@ -184,7 +174,7 @@ export default function SubVendorBookingList() {
                       <button
                         onClick={() =>
                           navigate(
-                            `/vendor/bookings/${b.id}`
+                            `/subvendor/bookings/${b.id}`
                           )
                         }
                         className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg"

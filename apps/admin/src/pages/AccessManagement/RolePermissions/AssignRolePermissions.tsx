@@ -4,7 +4,7 @@
 // ============================================
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../api/axios";
 import {
   ShieldCheck,
   KeyRound,
@@ -15,18 +15,16 @@ import {
 
 import { useNavigate } from "react-router-dom";
 
-const API = import.meta.env.VITE_API_URL;
-
 interface Role {
   roleId: number;
   name: string;
-  description: string
+  description: string;
 }
 
 interface Permission {
   permissionId: number;
   name: string;
-  description:string;
+  description: string;
 }
 
 export default function AssignRolePermissions() {
@@ -46,9 +44,7 @@ export default function AssignRolePermissions() {
   // ============================================
   const fetchRoles = async () => {
     try {
-      const res = await axios.get(
-        `${API}/restful/v1/api/roles`
-      );
+      const res = await api.get(`/restful/v1/api/roles`);
 
       setRoles(res.data.data || []);
     } catch (error) {
@@ -61,9 +57,7 @@ export default function AssignRolePermissions() {
   // ============================================
   const fetchPermissions = async () => {
     try {
-      const res = await axios.get(
-        `${API}/restful/v1/api/permissions`
-      );
+      const res = await api.get(`/restful/v1/api/permissions`);
 
       setPermissions(res.data.data || []);
     } catch (error) {
@@ -91,14 +85,9 @@ export default function AssignRolePermissions() {
         permissionId: Number(permissionId),
       };
 
-      const res = await axios.post(
-        `${API}/restful/v1/api/role-permissions`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const res = await api.post(
+        `/restful/v1/api/role-permissions`,
+        payload
       );
 
       setMessage(

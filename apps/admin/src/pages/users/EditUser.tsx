@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate, useParams } from "react-router-dom";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function EditUser() {
   const { userId } = useParams();
@@ -20,11 +18,7 @@ export default function EditUser() {
   // ================= FETCH USER =================
   const fetchUser = async () => {
     try {
-      const res = await axios.get(`${API}/restful/v1/api/users/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const res = await api.get(`/restful/v1/api/users/${userId}`);
 
       setForm(res.data.data);
     } catch (err) {
@@ -49,14 +43,10 @@ export default function EditUser() {
   // ================= UPDATE USER =================
   const handleUpdate = async () => {
     try {
-      await axios.put(`${API}/${userId}`, form, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      await api.put(`/restful/v1/api/users/${userId}`, form);
 
       alert("User updated successfully");
-      navigate(`/users/${userId}`);
+      navigate(`/users`);
     } catch (err) {
       console.error(err);
     }

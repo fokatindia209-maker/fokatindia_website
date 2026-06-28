@@ -4,7 +4,7 @@
 // ============================================
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../api/axios";
 
 import {
   Shield,
@@ -17,7 +17,6 @@ import {
 
 import { useNavigate } from "react-router-dom";
 
-const API = import.meta.env.VITE_API_URL;
 interface Role {
   roleId: number;
   name: string;
@@ -27,15 +26,11 @@ interface Role {
 export default function RolesList() {
   const navigate = useNavigate();
 
-  const [roles, setRoles] = useState<Role[]>(
-    []
-  );
+  const [roles, setRoles] = useState<Role[]>([]);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
 
   // ============================================
   // FETCH ROLES
@@ -45,14 +40,11 @@ export default function RolesList() {
     try {
       setLoading(true);
 
-      const res = await axios.get(`${API}/restful/v1/api/roles`);
+      const res = await api.get(`/restful/v1/api/roles`);
 
       setRoles(res.data.data || []);
     } catch (error) {
-      console.error(
-        "Failed to fetch roles",
-        error
-      );
+      console.error("Failed to fetch roles", error);
     } finally {
       setLoading(false);
     }
@@ -80,9 +72,7 @@ export default function RolesList() {
   // DELETE ROLE
   // ============================================
 
-  const handleDelete = async (
-    roleId: number
-  ) => {
+  const handleDelete = async (roleId: number) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this role?"
     );
@@ -90,9 +80,7 @@ export default function RolesList() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(
-        `${API}/restful/v1/api/roles/${roleId}`
-      );
+      await api.delete(`/restful/v1/api/roles/${roleId}`);
 
       alert("Role deleted successfully");
 
@@ -122,11 +110,7 @@ export default function RolesList() {
         </div>
 
         <button
-          onClick={() =>
-            navigate(
-              "/roles/create"
-            )
-          }
+          onClick={() => navigate("/roles/create")}
           className="
             flex items-center gap-2
             bg-blue-600 hover:bg-blue-700
@@ -160,9 +144,7 @@ export default function RolesList() {
             type="text"
             placeholder="Search roles..."
             value={search}
-            onChange={(e) =>
-              setSearch(e.target.value)
-            }
+            onChange={(e) => setSearch(e.target.value)}
             className="
               w-full
               border border-gray-300
@@ -245,9 +227,7 @@ export default function RolesList() {
                 <div className="flex gap-2">
                   <button
                     onClick={() =>
-                      navigate(
-                        `/roles/edit/${role.roleId}`
-                      )
+                      navigate(`/roles/edit/${role.roleId}`)
                     }
                     className="
                       h-9 w-9
@@ -262,11 +242,7 @@ export default function RolesList() {
                   </button>
 
                   <button
-                    onClick={() =>
-                      handleDelete(
-                        role.roleId
-                      )
-                    }
+                    onClick={() => handleDelete(role.roleId)}
                     className="
                       h-9 w-9
                       rounded-xl
@@ -309,22 +285,6 @@ export default function RolesList() {
                   Role ID:
                   {role.roleId}
                 </div>
-
-                {/* <button
-                  onClick={() =>
-                    navigate(
-                      `/access/role-permissions/${role.roleId}`
-                    )
-                  }
-                  className="
-                    text-sm
-                    text-blue-600
-                    font-semibold
-                    hover:underline
-                  "
-                >
-                  Manage Access
-                </button> */}
               </div>
             </div>
           ))}
@@ -335,34 +295,30 @@ export default function RolesList() {
       {/* EMPTY */}
       {/* ===================================== */}
 
-      {!loading &&
-        filteredRoles.length === 0 && (
-          <div
-            className="
-              bg-white
-              rounded-3xl
-              shadow-lg
-              p-20
-              text-center
-            "
-          >
-            <Shield
-              size={60}
-              className="
-                mx-auto
-                text-gray-300
-              "
-            />
+      {!loading && filteredRoles.length === 0 && (
+        <div
+          className="
+            bg-white
+            rounded-3xl
+            shadow-lg
+            p-20
+            text-center
+          "
+        >
+          <Shield
+            size={60}
+            className="mx-auto text-gray-300"
+          />
 
-            <h2 className="mt-4 text-xl font-bold text-gray-700">
-              No Roles Found
-            </h2>
+          <h2 className="mt-4 text-xl font-bold text-gray-700">
+            No Roles Found
+          </h2>
 
-            <p className="text-gray-500 mt-2">
-              Try changing search keyword
-            </p>
-          </div>
-        )}
+          <p className="text-gray-500 mt-2">
+            Try changing search keyword
+          </p>
+        </div>
+      )}
     </div>
   );
 }

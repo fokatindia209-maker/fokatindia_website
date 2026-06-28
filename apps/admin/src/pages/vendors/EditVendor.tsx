@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate, useParams } from "react-router-dom";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function EditVendor() {
   const { id } = useParams();
@@ -24,14 +22,7 @@ export default function EditVendor() {
   // ================= FETCH =================
   const fetchVendor = async () => {
     try {
-      const res = await axios.get(
-        `${API}/restful/v1/api/vendors/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await api.get(`/restful/v1/api/vendors/${id}`);
 
       setForm(res.data.data);
     } catch (err) {
@@ -56,20 +47,11 @@ export default function EditVendor() {
   // ================= UPDATE =================
   const handleUpdate = async () => {
     try {
-      await axios.put(
-        `${API}/restful/v1/api/vendors/${id}`,
-        {
-          ...form,
-          userId: Number(form.userId),
-          rating: Number(form.rating),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await api.put(`/restful/v1/api/vendors/${id}`, {
+        ...form,
+        userId: Number(form.userId),
+        rating: Number(form.rating),
+      });
 
       alert("Vendor updated successfully");
       navigate(`/vendors/${id}`);

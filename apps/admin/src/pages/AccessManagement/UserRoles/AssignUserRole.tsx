@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { Users, Shield, ArrowLeft, UserPlus, Save } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function AssignUserRole() {
   const navigate = useNavigate();
@@ -20,14 +18,7 @@ export default function AssignUserRole() {
   // FETCH USERS
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${API}/restful/v1/api/users`,
-         {
-          headers: {
-            "Content-Type": "application/json",
-             Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await api.get(`/restful/v1/api/users`);
       setUsers(res.data.data || []);
     } catch (err) {
       console.error(err);
@@ -37,7 +28,7 @@ export default function AssignUserRole() {
   // FETCH ROLES
   const fetchRoles = async () => {
     try {
-      const res = await axios.get(`${API}/restful/v1/api/roles`);
+      const res = await api.get(`/restful/v1/api/roles`);
       setRoles(res.data.data || []);
     } catch (err) {
       console.error(err);
@@ -55,16 +46,7 @@ export default function AssignUserRole() {
 
     try {
       setLoading(true);
-      await axios.post(
-        `${API}/restful/v1/api/user-roles`,
-        form,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            // Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await api.post(`/restful/v1/api/user-roles`, form);
 
       alert("Role assigned successfully");
       navigate("/user-roles");

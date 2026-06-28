@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 interface Payment {
   id: number;
@@ -25,20 +23,12 @@ export default function PaymentList() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   const fetchPayments = async () => {
     try {
       setLoading(true);
 
-      const res = await axios.get(
-        `${API}/restful/v1/api/payments`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await api.get(`/restful/v1/api/payments`);
 
       setPayments(res.data?.data || []);
     } catch (err) {
@@ -52,6 +42,17 @@ export default function PaymentList() {
   useEffect(() => {
     fetchPayments();
   }, []);
+
+  const deletePayment = async (id: number) => {
+    if (!confirm("Delete this payment?")) return;
+
+    try {
+      await api.delete(`/restful/v1/api/payments/${id}`);
+      fetchPayments();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const statusColor = (status: string) => {
     switch (status) {
@@ -108,7 +109,7 @@ export default function PaymentList() {
           <div></div>
         </div>
 
-        {/* 🔥 LOADER BELOW HEADER ROW */}
+        {/* LOADER BELOW HEADER ROW */}
         {loading && (
           <div className="border-t p-10 flex justify-center items-center">
             <div className="flex items-center gap-2 text-blue-600">
@@ -163,9 +164,7 @@ export default function PaymentList() {
 
               <div>
                 <button
-                  onClick={() =>
-                    navigate(`/payments/edit/${p.id}`)
-                  }
+                  onClick={() => navigate(`/payments/edit/${p.id}`)}
                   className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
                   View/Edit
@@ -174,9 +173,7 @@ export default function PaymentList() {
 
               <div>
                 <button
-                  onClick={() =>
-                    navigate(`/payments/edit/${p.id}`)
-                  }
+                  onClick={() => deletePayment(p.id)}
                   className="px-3 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
                 >
                   Delete

@@ -92,7 +92,7 @@ export default function SubVendorServiceList() {
 
           <button
             onClick={() =>
-              navigate("/vendor/services/create")
+              navigate("/subvendor/services/create")
             }
             className="bg-blue-600 text-white px-4 py-2 rounded-lg"
           >
@@ -217,7 +217,7 @@ export default function SubVendorServiceList() {
                       <button
                         onClick={() =>
                           navigate(
-                            `/vendor/services/edit/${service.id}`
+                            `/subvendor/services/edit/${service.id}`
                           )
                         }
                         className="px-3 py-1 rounded bg-blue-600 text-white"

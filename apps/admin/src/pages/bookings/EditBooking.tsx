@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function EditBooking() {
   const { id } = useParams();
@@ -11,42 +9,20 @@ export default function EditBooking() {
 
   const [loading, setLoading] = useState(true);
 
-  const [form, setForm] = useState<any>({
-    userId: "",
-    vendorId: "",
-    subVendorId: "",
-    categoryId: "",
-    serviceId: "",
-    bookingDate: "",
-    bookingTime: "",
-    address: "",
-    city: "",
-    pincode: "",
-    latitude: "",
-    longitude: "",
-    amount: "",
-    discountAmount: "",
-    finalAmount: "",
-    paymentStatus: "PENDING",
-    bookingStatus: "PENDING",
-    notes: "",
-    otp: "",
-    active: true,
-  });
+  const [booking, setBooking] = useState<any>(null);
+
+  const [bookingStatus, setBookingStatus] = useState("PENDING");
+  const [paymentStatus, setPaymentStatus] = useState("PENDING");
 
   // ================= FETCH =================
   const fetchBooking = async () => {
     try {
-      const res = await axios.get(
-        `${API}/restful/v1/api/bookings/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await api.get(`/restful/v1/api/bookings/${id}`);
 
-      setForm(res.data.data || res.data);
+      const data = res.data.data || res.data;
+      setBooking(data);
+      setBookingStatus(data.bookingStatus || "PENDING");
+      setPaymentStatus(data.paymentStatus || "PENDING");
     } catch (err) {
       console.error(err);
     } finally {
@@ -58,36 +34,16 @@ export default function EditBooking() {
     fetchBooking();
   }, [id]);
 
-  // ================= HANDLE =================
-  const handleChange = (e: any) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   // ================= UPDATE =================
   const handleUpdate = async () => {
     try {
-      await axios.put(
-        `${API}/restful/v1/api/bookings/${id}`,
+      await api.put(
+        `/restful/v1/api/bookings/${id}/status`,
+        null,
         {
-          ...form,
-          userId: Number(form.userId),
-          vendorId: Number(form.vendorId),
-          subVendorId: Number(form.subVendorId),
-          categoryId: Number(form.categoryId),
-          serviceId: Number(form.serviceId),
-          amount: Number(form.amount),
-          discountAmount: Number(form.discountAmount),
-          finalAmount: Number(form.finalAmount),
-          latitude: Number(form.latitude),
-          longitude: Number(form.longitude),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
+          params: {
+            bookingStatus,
+            paymentStatus,
           },
         }
       );
@@ -128,43 +84,67 @@ export default function EditBooking() {
           Edit Booking
         </h1>
 
-        {/* FIELDS */}
-        <input name="userId" value={form.userId} placeholder="User ID" className="w-full border rounded-lg p-3 mb-3" onChange={handleChange} />
+        {/* READ-ONLY DETAILS */}
+        {booking && (
+          <div className="bg-gray-50 rounded-xl p-4 mb-6 space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-500">Booking ID</span>
+              <span className="font-medium">{booking.id ?? id}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">User ID</span>
+              <span className="font-medium">{booking.userId}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Vendor ID</span>
+              <span className="font-medium">{booking.vendorId}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Service ID</span>
+              <span className="font-medium">{booking.serviceId}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Date</span>
+              <span className="font-medium">{booking.bookingDate}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Amount</span>
+              <span className="font-medium">₹{booking.finalAmount ?? booking.amount}</span>
+            </div>
+          </div>
+        )}
 
-        <input name="vendorId" value={form.vendorId} placeholder="Vendor ID" className="w-full border rounded-lg p-3 mb-3" onChange={handleChange} />
+        {/* EDITABLE STATUS FIELDS */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Booking Status
+          </label>
+          <select
+            value={bookingStatus}
+            onChange={(e) => setBookingStatus(e.target.value)}
+            className="w-full border rounded-lg p-3"
+          >
+            <option value="PENDING">PENDING</option>
+            <option value="CONFIRMED">CONFIRMED</option>
+            <option value="CANCELLED">CANCELLED</option>
+            <option value="COMPLETED">COMPLETED</option>
+          </select>
+        </div>
 
-        <input name="subVendorId" value={form.subVendorId} placeholder="Sub Vendor ID" className="w-full border rounded-lg p-3 mb-3" onChange={handleChange} />
-
-        <input name="categoryId" value={form.categoryId} placeholder="Category ID" className="w-full border rounded-lg p-3 mb-3" onChange={handleChange} />
-
-        <input name="serviceId" value={form.serviceId} placeholder="Service ID" className="w-full border rounded-lg p-3 mb-3" onChange={handleChange} />
-
-        <input name="bookingDate" value={form.bookingDate} placeholder="Booking Date" className="w-full border rounded-lg p-3 mb-3" onChange={handleChange} />
-
-        <input name="bookingTime" value={form.bookingTime} placeholder="Booking Time" className="w-full border rounded-lg p-3 mb-3" onChange={handleChange} />
-
-        <textarea name="address" value={form.address} placeholder="Address" className="w-full border rounded-lg p-3 mb-3" onChange={handleChange} />
-
-        <input name="city" value={form.city} placeholder="City" className="w-full border rounded-lg p-3 mb-3" onChange={handleChange} />
-
-        <input name="amount" value={form.amount} placeholder="Amount" className="w-full border rounded-lg p-3 mb-3" onChange={handleChange} />
-
-        <input name="discountAmount" value={form.discountAmount} placeholder="Discount Amount" className="w-full border rounded-lg p-3 mb-3" onChange={handleChange} />
-
-        <input name="finalAmount" value={form.finalAmount} placeholder="Final Amount" className="w-full border rounded-lg p-3 mb-3" onChange={handleChange} />
-
-        <select name="bookingStatus" value={form.bookingStatus} className="w-full border rounded-lg p-3 mb-3" onChange={handleChange}>
-          <option value="PENDING">PENDING</option>
-          <option value="CONFIRMED">CONFIRMED</option>
-          <option value="CANCELLED">CANCELLED</option>
-          <option value="COMPLETED">COMPLETED</option>
-        </select>
-
-        <select name="paymentStatus" value={form.paymentStatus} className="w-full border rounded-lg p-3 mb-4" onChange={handleChange}>
-          <option value="PENDING">PENDING</option>
-          <option value="PAID">PAID</option>
-          <option value="FAILED">FAILED</option>
-        </select>
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Payment Status
+          </label>
+          <select
+            value={paymentStatus}
+            onChange={(e) => setPaymentStatus(e.target.value)}
+            className="w-full border rounded-lg p-3"
+          >
+            <option value="PENDING">PENDING</option>
+            <option value="PAID">PAID</option>
+            <option value="FAILED">FAILED</option>
+          </select>
+        </div>
 
         {/* UPDATE BUTTON */}
         <button

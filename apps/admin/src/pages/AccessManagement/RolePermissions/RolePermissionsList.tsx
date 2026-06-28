@@ -4,7 +4,7 @@
 // ============================================
 
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import api from "../../../api/axios";
 import {
   Shield,
   KeyRound,
@@ -14,8 +14,6 @@ import {
   Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-const API = import.meta.env.VITE_API_URL;
 
 interface RolePermission {
   id: number;
@@ -34,9 +32,7 @@ export default function RolePermissionsList() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        `${API}/restful/v1/api/role-permissions`
-      );
+      const res = await api.get(`/restful/v1/api/role-permissions`);
       setData(res.data.data || []);
     } catch (err) {
       console.error(err);
@@ -54,14 +50,7 @@ export default function RolePermissionsList() {
     if (!confirm("Remove this mapping?")) return;
 
     try {
-      await axios.delete(
-        `${API}/restful/v1/api/role-permissions/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await api.delete(`/restful/v1/api/role-permissions/${id}`);
       fetchData();
     } catch (err) {
       console.error(err);

@@ -39,39 +39,25 @@ export default function ProtectedRoute({
 
   // ❌ NOT LOGGED IN
   if (!isLoggedIn) {
-    return (
-      <Navigate
-        to="/login"
-        replace
-      />
-    );
+    return <Navigate to="/login" replace />;
   }
 
-  // ❌ DOCUMENT NOT APPROVED (or missing)
+  // ❌ DOCUMENTS SUBMITTED — awaiting admin review
+  if (documentStatus === "SUBMITTED") {
+    return <Navigate to="/document_review" replace />;
+  }
+
+  // ❌ DOCUMENT NOT APPROVED (PENDING or REJECTED)
   if (documentStatus !== "APPROVED") {
-    return (
-      <Navigate
-        to="/document_upload"
-        replace
-      />
-    );
+    return <Navigate to="/document_upload" replace />;
   }
 
   // ❌ ROLE CHECK (Vendor/SubVendor protection)
-  if (
-    allowedRole &&
-    role !== allowedRole
-  ) {
+  if (allowedRole && role !== allowedRole) {
     return role === "SUB_VENDOR" ? (
-      <Navigate
-        to="/subvendor/dashboard"
-        replace
-      />
+      <Navigate to="/subvendor/dashboard" replace />
     ) : (
-      <Navigate
-        to="/vendor/dashboard"
-        replace
-      />
+      <Navigate to="/vendor/dashboard" replace />
     );
   }
 

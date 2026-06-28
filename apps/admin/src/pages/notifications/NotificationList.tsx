@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 interface Notification {
   id: number;
@@ -20,20 +18,12 @@ export default function NotificationList() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   const fetchNotifications = async () => {
     try {
       setLoading(true);
 
-      const res = await axios.get(
-        `${API}/restful/v1/api/notifications`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await api.get(`/restful/v1/api/notifications`);
 
       setNotifications(res.data?.data || []);
     } catch (err) {
@@ -52,14 +42,7 @@ export default function NotificationList() {
     if (!confirm("Are you sure you want to delete this notification?")) return;
 
     try {
-      await axios.delete(
-        `${API}/restful/v1/api/notifications/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await api.delete(`/restful/v1/api/notifications/${id}`);
 
       fetchNotifications();
     } catch (err) {
@@ -69,15 +52,7 @@ export default function NotificationList() {
 
   const markAsRead = async (id: number) => {
     try {
-      await axios.put(
-        `${API}/restful/v1/api/notifications/${id}/read`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await api.put(`/restful/v1/api/notifications/${id}/read`, {});
 
       fetchNotifications();
     } catch (err) {

@@ -60,13 +60,14 @@ export const generateFCMToken = async () => {
       return null;
     }
 
-    const currentToken = await getToken(
-      messaging,
-      {
-        vapidKey:
-          import.meta.env.VITE_FIREBASE_VAPID_KEY,
-      }
+    const registration = await navigator.serviceWorker.register(
+      "/firebase-messaging-sw.js"
     );
+
+    const currentToken = await getToken(messaging, {
+      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+      serviceWorkerRegistration: registration,
+    });
 
     if (currentToken) {
       console.log(

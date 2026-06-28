@@ -48,7 +48,7 @@ export default function Login() {
       const res = await loginService(
         values.email,
         values.password,
-        fcmToken || ""
+        fcmToken ?? null
       );
 
       // Only VENDOR, SUB_VENDOR allowed
@@ -79,7 +79,17 @@ export default function Login() {
 
       dispatch(loginSuccess(res));
 
-      // Redirect based on role
+      // Redirect based on document status first, then role
+      if (res.documentStatus === "SUBMITTED") {
+        navigate("/document_review");
+        return;
+      }
+
+      if (res.documentStatus !== "APPROVED") {
+        navigate("/document_upload");
+        return;
+      }
+
       switch (res.role) {
         case "VENDOR":
           navigate("/vendor/dashboard");

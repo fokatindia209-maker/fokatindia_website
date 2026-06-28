@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 interface Booking {
   id: number;
@@ -46,14 +44,7 @@ export default function BookingList() {
     try {
       setLoading(true);
 
-      const res = await axios.get(
-        `${API}/restful/v1/api/bookings`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await api.get(`/restful/v1/api/bookings`);
 
       setBookings(res.data.data || []);
     } catch (err) {

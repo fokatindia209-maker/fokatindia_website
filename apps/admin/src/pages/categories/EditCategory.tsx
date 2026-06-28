@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Tags,
@@ -7,8 +7,6 @@ import {
   ArrowLeft,
   Loader2,
 } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 interface Category {
   id: number;
@@ -44,14 +42,7 @@ export default function EditCategory() {
       try {
         setLoading(true);
 
-        const res = await axios.get(
-          `${API}/restful/v1/api/categories/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const res = await api.get(`/restful/v1/api/categories/${id}`);
 
         setForm(res.data.data || res.data);
       } catch (err) {
@@ -71,18 +62,14 @@ export default function EditCategory() {
     try {
       setLoading(true);
 
-      await axios.put(
-        `${API}/restful/v1/api/categories/${id}`,
-        {
-          ...form,
-          displayOrder: Number(form.displayOrder),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("description", form.description);
+      formData.append("displayOrder", String(form.displayOrder ?? 0));
+      formData.append("slug", form.slug ?? "");
+      formData.append("active", form.active ? "true" : "false");
+
+      await api.post(`/restful/v1/api/categories/update/${id}`, formData);
 
       alert("Category updated successfully");
       navigate("/categories");
@@ -160,16 +147,6 @@ export default function EditCategory() {
                 ...form,
                 displayOrder: Number(e.target.value),
               })
-            }
-            className="border p-3 rounded-xl"
-          />
-
-          {/* IMAGE URL */}
-          <input
-            placeholder="Image URL"
-            value={form.imageUrl}
-            onChange={(e) =>
-              setForm({ ...form, imageUrl: e.target.value })
             }
             className="border p-3 rounded-xl"
           />

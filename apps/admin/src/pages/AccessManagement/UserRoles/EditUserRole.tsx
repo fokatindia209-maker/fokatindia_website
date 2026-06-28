@@ -4,11 +4,9 @@
 // ============================================
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../api/axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { Users, Shield, Save, ArrowLeft } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function EditUserRole() {
   const { id } = useParams();
@@ -29,14 +27,7 @@ export default function EditUserRole() {
       try {
         setLoading(true);
 
-        const res = await axios.get(
-          `${API}/restful/v1/api/user-roles/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const res = await api.get(`/restful/v1/api/user-roles/${id}`);
 
         setForm(res.data.data);
       } catch (err) {
@@ -56,15 +47,7 @@ export default function EditUserRole() {
     try {
       setLoading(true);
 
-      await axios.put(
-        `${API}/restful/v1/api/user-roles/${id}`,
-        form,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await api.put(`/restful/v1/api/user-roles/${id}`, form);
 
       alert("User Role Updated Successfully");
       navigate("/user-roles");

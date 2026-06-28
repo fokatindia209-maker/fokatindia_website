@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Building2 } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function CreateVendor() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState<any[]>([]);
 
   const [form, setForm] = useState({
-    userId: "",
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
     businessName: "",
     gstNumber: "",
     address: "",
@@ -22,29 +22,6 @@ export default function CreateVendor() {
     rating: 0,
   });
 
-  // ================= FETCH USERS =================
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await axios.get(
-          `${API}/restful/v1/api/users`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-
-        setUsers(res.data.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  // ================= HANDLE =================
   const handleChange = (e: any) => {
     setForm({
       ...form,
@@ -52,30 +29,35 @@ export default function CreateVendor() {
     });
   };
 
-  // ================= SUBMIT =================
   const handleSubmit = async () => {
     try {
       setLoading(true);
 
-      await axios.post(
-        `${API}/restful/v1/api/vendors`,
-        {
-          ...form,
-          userId: Number(form.userId),
-          rating: Number(form.rating),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const userRes = await api.post(`/restful/v1/api/users/admin/vendors`, {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        password: form.password,
+      });
+
+      const userId = userRes.data?.data?.userId || userRes.data?.userId;
+
+      await api.post(`/restful/v1/api/vendors`, {
+        userId: Number(userId),
+        businessName: form.businessName,
+        gstNumber: form.gstNumber,
+        address: form.address,
+        city: form.city,
+        serviceArea: form.serviceArea,
+        kycStatus: form.kycStatus,
+        rating: Number(form.rating),
+      });
 
       alert("Vendor created successfully");
       navigate("/vendors");
     } catch (err) {
       console.error(err);
+      alert("Failed to create vendor");
     } finally {
       setLoading(false);
     }
@@ -84,10 +66,8 @@ export default function CreateVendor() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10">
 
-      {/* CARD */}
       <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8">
 
-        {/* BACK BUTTON */}
         <button
           onClick={() => navigate("/vendors")}
           className="flex items-center gap-2 text-gray-600 hover:text-black mb-6"
@@ -96,7 +76,6 @@ export default function CreateVendor() {
           Back
         </button>
 
-        {/* HEADER */}
         <div className="flex items-center gap-3 mb-6">
           <div className="bg-blue-100 p-3 rounded-xl">
             <Building2 className="text-blue-600" />
@@ -110,28 +89,42 @@ export default function CreateVendor() {
           </div>
         </div>
 
-        {/* USER DROPDOWN */}
-        <div className="mb-4">
-          <label className="text-sm text-gray-600">User</label>
+        <p className="text-sm font-semibold text-gray-700 mb-3">User Account</p>
 
-          <select
-            name="userId"
-            className="w-full border rounded-xl p-3 mt-1"
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <input
+            name="name"
+            placeholder="Full Name"
+            className="border rounded-xl p-3 col-span-2"
             onChange={handleChange}
-            value={form.userId}
-          >
-            <option value="">Select User</option>
-            {users.map((u: any) => (
-              <option key={u.userId} value={u.userId}>
-                {u.name} ({u.email})
-              </option>
-            ))}
-          </select>
+          />
+
+          <input
+            name="email"
+            placeholder="Email"
+            className="border rounded-xl p-3"
+            onChange={handleChange}
+          />
+
+          <input
+            name="phone"
+            placeholder="Phone"
+            className="border rounded-xl p-3"
+            onChange={handleChange}
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="border rounded-xl p-3 col-span-2"
+            onChange={handleChange}
+          />
         </div>
 
-        {/* INPUTS */}
-        <div className="grid grid-cols-2 gap-4">
+        <p className="text-sm font-semibold text-gray-700 mb-3">Vendor Profile</p>
 
+        <div className="grid grid-cols-2 gap-4">
           <input
             name="businessName"
             placeholder="Business Name"
@@ -167,7 +160,6 @@ export default function CreateVendor() {
             onChange={handleChange}
           />
 
-          {/* KYC */}
           <select
             name="kycStatus"
             className="border rounded-xl p-3 col-span-2"
@@ -188,7 +180,6 @@ export default function CreateVendor() {
           />
         </div>
 
-        {/* BUTTON */}
         <button
           onClick={handleSubmit}
           disabled={loading}

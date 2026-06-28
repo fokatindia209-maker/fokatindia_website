@@ -4,11 +4,9 @@
 // ============================================
 
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import api from "../../../api/axios";
 import { Users, Shield, Search, Plus, Trash2, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-const API = import.meta.env.VITE_API_URL;
 
 interface UserRole {
   id: number;
@@ -30,10 +28,7 @@ export default function UserRolesList() {
     try {
       setLoading(true);
 
-      const res = await axios.get(
-        `${API}/restful/v1/api/user-roles`,
-        {}
-      );
+      const res = await api.get(`/restful/v1/api/user-roles`);
 
       setData(res.data.data || []);
     } catch (err) {
@@ -54,10 +49,7 @@ export default function UserRolesList() {
     if (!confirm("Remove this user role?")) return;
 
     try {
-      await axios.delete(
-        `${API}/restful/v1/api/user-roles/${id}`,
-        {}
-      );
+      await api.delete(`/restful/v1/api/user-roles/${id}`);
 
       fetchData();
     } catch (err) {

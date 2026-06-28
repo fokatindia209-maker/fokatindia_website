@@ -67,7 +67,7 @@ export default function CategoryList() {
         <h1 className="text-2xl font-bold text-gray-800">Categories</h1>
 
         <button
-          onClick={() => navigate("/categories/create")}
+          onClick={() => navigate("/vendor/categories/create")}
           className="px-4 py-2 bg-blue-600 text-white rounded-xl"
         >
           + Create Category
@@ -157,7 +157,7 @@ export default function CategoryList() {
                     {/* ACTIONS */}
                     <td className="p-3 flex gap-2">
                       <button
-                        onClick={() => navigate(`/categories/edit/${c.id}`)}
+                        onClick={() => navigate(`/vendor/categories/edit/${c.id}`)}
                         className="px-3 py-1 bg-blue-500 text-white rounded"
                       >
                         Edit

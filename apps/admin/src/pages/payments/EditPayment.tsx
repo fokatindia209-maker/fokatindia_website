@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate, useParams } from "react-router-dom";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function EditPayment() {
   const { id } = useParams();
@@ -23,19 +21,10 @@ export default function EditPayment() {
     refundAmount: 0,
   });
 
-  const token = localStorage.getItem("token");
-
   // ================= FETCH =================
   const fetchPayment = async () => {
     try {
-      const res = await axios.get(
-        `${API}/restful/v1/api/payments/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await api.get(`/restful/v1/api/payments/${id}`);
 
       setForm(res.data.data);
     } catch (err) {
@@ -60,15 +49,7 @@ export default function EditPayment() {
   // ================= UPDATE =================
   const handleUpdate = async () => {
     try {
-      await axios.put(
-        `${API}/restful/v1/api/payments/${id}/status?status=${form.paymentStatus}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await api.put(`/restful/v1/api/payments/${id}/status?status=${form.paymentStatus}`, {});
 
       alert("Payment updated successfully");
       navigate("/payments");

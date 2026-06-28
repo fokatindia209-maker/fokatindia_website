@@ -70,9 +70,8 @@ export default function Booking() {
       finalAmount: total,
 
       paymentStatus: "PENDING",
-      bookingStatus: "SUCCESS",
+      bookingStatus: "PENDING",
 
-      otp: "0000",
       active: true,
       notes,
     };

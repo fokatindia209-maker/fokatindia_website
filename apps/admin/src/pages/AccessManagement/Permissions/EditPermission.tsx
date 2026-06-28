@@ -3,11 +3,9 @@
 // ============================================
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../api/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function EditPermission() {
   const { permissionId } = useParams();
@@ -22,8 +20,8 @@ export default function EditPermission() {
 
   // GET BY ID
   const fetchData = async () => {
-    const res = await axios.get(
-      `${API}/restful/v1/api/permissions/${permissionId}`
+    const res = await api.get(
+      `/restful/v1/api/permissions/${permissionId}`
     );
 
     setForm(res.data.data);
@@ -48,15 +46,9 @@ export default function EditPermission() {
     try {
       setLoading(true);
 
-      await axios.put(
-        `${API}/restful/v1/api/permissions/${permissionId}`,
-        form,
-        {
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //     Authorization: `Bearer ${localStorage.getItem("token")}`,
-        //   },
-        }
+      await api.put(
+        `/restful/v1/api/permissions/${permissionId}`,
+        form
       );
 
       alert("Updated successfully");

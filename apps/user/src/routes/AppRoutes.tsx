@@ -26,6 +26,7 @@ import ForgotPassword from "../pages/ForgotPassword"; // ✅ ADD
 
 import ProtectedRoute from "../components/ProtectedRoute";
 import Notifications from "../pages/Notifications";
+import Reviews from "../pages/Reviews";
 
 export default function AppRoutes() {
   return (
@@ -100,6 +101,15 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <ProfileDetails />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/reviews/:bookingId"
+        element={
+          <ProtectedRoute>
+            <Reviews />
           </ProtectedRoute>
         }
       />

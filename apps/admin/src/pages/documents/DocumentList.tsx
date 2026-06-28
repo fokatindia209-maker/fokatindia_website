@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import {
   Upload,
@@ -9,8 +9,6 @@ import {
   FileText,
   Loader2,
 } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 interface Document {
   documentId: number;
@@ -27,6 +25,13 @@ export default function DocumentList() {
   const [loading, setLoading] = useState(true);
   const [loadingId, setLoadingId] = useState<number | null>(null);
 
+  // Rejection remarks modal state
+  const [rejectModal, setRejectModal] = useState<{
+    open: boolean;
+    docId: number | null;
+    remarks: string;
+  }>({ open: false, docId: null, remarks: "" });
+
   const [popup, setPopup] = useState({
     open: false,
     message: "",
@@ -39,14 +44,7 @@ export default function DocumentList() {
     try {
       setLoading(true);
 
-      const res = await axios.get(
-        `${API}/restful/v1/api/documents`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await api.get(`/restful/v1/api/documents`);
 
       setDocs(res.data.data || []);
     } catch (err) {
@@ -62,29 +60,21 @@ export default function DocumentList() {
 
   const verifyDocument = async (
     id: number,
-    status: "APPROVED" | "REJECTED"
+    status: "APPROVED" | "REJECTED",
+    remarks?: string
   ) => {
     try {
       setLoadingId(id);
 
-      await axios.put(
-        `${API}/restful/v1/api/documents/${id}/verify?status=${status}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const params = new URLSearchParams({ status });
+      if (remarks && remarks.trim()) params.set("remarks", remarks.trim());
+
+      await api.put(`/restful/v1/api/documents/${id}/verify?${params.toString()}`, {});
 
       setDocs((prev) =>
         prev.map((doc) =>
           doc.documentId === id
-            ? {
-                ...doc,
-                status,
-                verifiedAt: new Date().toISOString(),
-              }
+            ? { ...doc, status, verifiedAt: new Date().toISOString() }
             : doc
         )
       );
@@ -97,19 +87,19 @@ export default function DocumentList() {
             : "Document rejected successfully",
         type: status,
       });
-    } catch (err) {
-      setPopup({
-        open: true,
-        message: "Status update failed",
-        type: "ERROR",
-      });
+    } catch {
+      setPopup({ open: true, message: "Status update failed", type: "ERROR" });
     } finally {
       setLoadingId(null);
-
-      setTimeout(() => {
-        setPopup({ open: false, message: "", type: "" });
-      }, 2500);
+      setTimeout(() => setPopup({ open: false, message: "", type: "" }), 2500);
     }
+  };
+
+  const handleRejectConfirm = async () => {
+    if (!rejectModal.docId) return;
+    setRejectModal(prev => ({ ...prev, open: false }));
+    await verifyDocument(rejectModal.docId, "REJECTED", rejectModal.remarks);
+    setRejectModal({ open: false, docId: null, remarks: "" });
   };
 
   return (
@@ -237,7 +227,7 @@ export default function DocumentList() {
 
                         <button
                           onClick={() =>
-                            verifyDocument(doc.documentId, "REJECTED")
+                            setRejectModal({ open: true, docId: doc.documentId, remarks: "" })
                           }
                           disabled={
                             loadingId === doc.documentId ||
@@ -277,6 +267,39 @@ export default function DocumentList() {
         <div className="fixed top-6 right-6 z-50">
           <div className="bg-gray-800 text-white px-6 py-4 rounded-2xl shadow-xl">
             {popup.message}
+          </div>
+        </div>
+      )}
+
+      {/* REJECT MODAL */}
+      {rejectModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
+            <h3 className="text-lg font-bold text-gray-800 mb-2">Reject Document</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Provide a reason for rejection. The vendor/sub-vendor will see this message when they log in.
+            </p>
+            <textarea
+              className="w-full border rounded-lg p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-red-400"
+              rows={3}
+              placeholder="Enter rejection reason (optional)"
+              value={rejectModal.remarks}
+              onChange={e => setRejectModal(prev => ({ ...prev, remarks: e.target.value }))}
+            />
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => setRejectModal({ open: false, docId: null, remarks: "" })}
+                className="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRejectConfirm}
+                className="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700"
+              >
+                Confirm Reject
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -7,4 +7,13 @@ export default defineConfig({
   plugins: [react(),
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      '/restful': {
+        target: 'https://api.fokatindia.com',
+        changeOrigin: true,
+        secure: true,
+      },
+    },
+  },
 })

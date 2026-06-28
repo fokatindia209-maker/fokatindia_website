@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import {
   Tag,
@@ -7,8 +7,6 @@ import {
   Loader2,
   UploadCloud
 } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function CreateCategory() {
   const navigate = useNavigate();
@@ -45,18 +43,11 @@ export default function CreateCategory() {
         data.append(k, String(v))
       );
 
-      if (file) data.append("file", file);
+      if (file) data.append("image", file);
 
-      const res = await axios.post(
-        `${API}/restful/v1/api/categories/create`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const res = await api.post(`/restful/v1/api/categories/create`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       alert(res.data.message);
       navigate("/categories");

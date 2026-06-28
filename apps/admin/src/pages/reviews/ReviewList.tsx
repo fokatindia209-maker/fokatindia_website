@@ -4,7 +4,7 @@
 // ============================================
 
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import {
   Star,
   Search,
@@ -15,8 +15,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-const API = import.meta.env.VITE_API_URL;
 
 interface Review {
   id: number;
@@ -35,7 +33,6 @@ interface Review {
 
 export default function ReviewList() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(false);
@@ -45,9 +42,7 @@ export default function ReviewList() {
     try {
       setLoading(true);
 
-      const res = await axios.get(`${API}/restful/v1/api/reviews`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get(`/restful/v1/api/reviews`);
 
       const data =
         res.data?.data ||
@@ -76,9 +71,7 @@ export default function ReviewList() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`${API}/restful/v1/api/reviews/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/restful/v1/api/reviews/${id}`);
 
       fetchReviews();
     } catch (error) {

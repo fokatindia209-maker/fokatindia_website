@@ -1,25 +1,35 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams } from "react-router-dom";
+import api from "../../api/axios";
+import { useParams, useNavigate } from "react-router-dom";
 
-const API = import.meta.env.VITE_API_URL;
 export default function DocumentDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [doc, setDoc] = useState<any>(null);
 
   const fetchDoc = async () => {
-    const res = await axios.get(`${API}/restful/v1/api/documents/${id}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    const res = await api.get(`/restful/v1/api/documents/${id}`);
 
-    setDoc(res.data);
+    setDoc(res.data?.data);
   };
 
   useEffect(() => {
     fetchDoc();
   }, [id]);
+
+  const handleVerify = async () => {
+    await api.put(`/restful/v1/api/documents/${id}/verify`, null, {
+      params: { status: "APPROVED" },
+    });
+    navigate(-1);
+  };
+
+  const handleReject = async () => {
+    await api.put(`/restful/v1/api/documents/${id}/verify`, null, {
+      params: { status: "REJECTED" },
+    });
+    navigate(-1);
+  };
 
   if (!doc) return <div className="p-6">Loading...</div>;
 
@@ -66,11 +76,17 @@ export default function DocumentDetails() {
       </div>
 
       <div className="mt-6 flex gap-3">
-        <button className="px-4 py-2 bg-green-500 text-white rounded">
+        <button
+          onClick={handleVerify}
+          className="px-4 py-2 bg-green-500 text-white rounded"
+        >
           Verify
         </button>
 
-        <button className="px-4 py-2 bg-red-500 text-white rounded">
+        <button
+          onClick={handleReject}
+          className="px-4 py-2 bg-red-500 text-white rounded"
+        >
           Reject
         </button>
       </div>

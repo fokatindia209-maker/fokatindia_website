@@ -4,7 +4,7 @@
 // ============================================
 
 import { useState } from "react";
-import axios from "axios";
+import api from "../../../api/axios";
 import {
   Shield,
   Save,
@@ -13,9 +13,6 @@ import {
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
-
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function CreatePermission() {
   const navigate = useNavigate();
@@ -54,15 +51,9 @@ export default function CreatePermission() {
     try {
       setLoading(true);
 
-      const res = await axios.post(
-        `${API}/restful/v1/api/permissions`,
-        formData,
-        {
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-        }
+      const res = await api.post(
+        `/restful/v1/api/permissions`,
+        formData
       );
 
       console.log(

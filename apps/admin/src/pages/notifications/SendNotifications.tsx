@@ -1,12 +1,9 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function SendNotification() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   const [form, setForm] = useState({
     sendType: "single",
@@ -58,16 +55,7 @@ export default function SendNotification() {
         payload.fcmToken = form.fcmToken;
       }
 
-      const response = await axios.post(
-        `${API}/restful/v1/api/notifications`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await api.post(`/restful/v1/api/notifications`, payload);
 
       alert(response.data.message || "Notification sent successfully");
 

@@ -9,7 +9,7 @@ import api from "../api/axios";
 export const loginService = async (
     email: string,
     password: string,
-    fcmToken: string
+    fcmToken: string | null
 ) => {
 
     const response = await api.post(
@@ -17,7 +17,7 @@ export const loginService = async (
         {
             email,
             password,
-            fcmToken
+            ...(fcmToken ? { fcmToken } : {}),
         }
     );
 

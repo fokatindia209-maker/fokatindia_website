@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Loader2 } from "lucide-react";
 import PartnerLayout from "../../../components/PartnerLayout";
-
-const API = import.meta.env.VITE_API_URL;
+import api from "../../../api/axios";
 
 interface Category {
   id: number;
@@ -22,16 +20,10 @@ export default function SubVendorCategoryList() {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-
-      const res = await axios.get(
-        `${API}/restful/v1/vendor/categories`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const res = await api.get(
+        `/restful/v1/api/categories/vendors/${user.vendorId}`
       );
-
       setCategories(res.data.data || []);
     } catch (err) {
       console.error(err);

@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function CreatePayment() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
 
@@ -27,12 +24,8 @@ export default function CreatePayment() {
   const fetchData = async () => {
     try {
       const [u, b] = await Promise.all([
-        axios.get(`${API}/restful/v1/api/users`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get(`${API}/restful/v1/api/bookings`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        api.get(`/restful/v1/api/users`),
+        api.get(`/restful/v1/api/bookings`),
       ]);
 
       setUsers(u.data?.data || []);
@@ -75,16 +68,7 @@ export default function CreatePayment() {
         refundAmount: 0,
       };
 
-      await axios.post(
-        `${API}/restful/v1/api/payments`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await api.post(`/restful/v1/api/payments`, payload);
 
       alert("Payment created successfully");
       navigate("/payments");

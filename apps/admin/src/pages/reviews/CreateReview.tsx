@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Star, Save } from "lucide-react";
 
-const API = import.meta.env.VITE_API_URL;
-
 export default function CreateReview() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
 
@@ -35,26 +32,9 @@ export default function CreateReview() {
     try {
       const [bookingRes, userRes, vendorRes] =
         await Promise.all([
-          axios.get(`${API}/restful/v1/api/bookings`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-
-          axios.get(`${API}/restful/v1/api/users`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-
-          axios.get(
-            `${API}/restful/v1/api/vendors/users`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          ),
+          api.get(`/restful/v1/api/bookings`),
+          api.get(`/restful/v1/api/users`),
+          api.get(`/restful/v1/api/vendors/users`),
         ]);
 
       setBookings(bookingRes.data.data || []);
@@ -81,14 +61,7 @@ export default function CreateReview() {
     });
 
     try {
-      const res = await axios.get(
-        `${API}/restful/v1/api/subvendors/vendor/${vendorId}/users`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await api.get(`/restful/v1/api/subvendors/vendor/${vendorId}/users`);
 
       setSubVendors(res.data.data || []);
       setCategories([]);
@@ -111,14 +84,7 @@ export default function CreateReview() {
     });
 
     try {
-      const res = await axios.get(
-        `${API}/restful/v1/api/categories`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await api.get(`/restful/v1/api/categories`);
 
       setCategories(res.data.data || []);
       setServices([]);
@@ -139,14 +105,7 @@ export default function CreateReview() {
     });
 
     try {
-      const res = await axios.get(
-        `${API}/restful/v1/api/services?categoryId=${categoryId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await api.get(`/restful/v1/api/services?categoryId=${categoryId}`);
 
       setServices(res.data.data || []);
     } catch (err) {
@@ -177,17 +136,7 @@ export default function CreateReview() {
 
       console.log("REVIEW PAYLOAD", payload);
 
-      await axios.post(
-        `${API}/restful/v1/api/reviews`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type":
-              "application/json",
-          },
-        }
-      );
+      await api.post(`/restful/v1/api/reviews`, payload);
 
       alert("Review created successfully");
 

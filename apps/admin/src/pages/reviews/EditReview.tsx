@@ -4,17 +4,13 @@
 // ============================================
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Star } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
-
 
 export default function EditReview() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
@@ -49,11 +45,7 @@ export default function EditReview() {
     try {
       setPageLoading(true);
 
-      const res = await axios.get(`${API}/restful/v1/api/reviews/${id}`, {
-        headers: {
-         Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await api.get(`/restful/v1/api/reviews/${id}`);
 
       console.log("REVIEW DETAILS => ", res.data);
 
@@ -103,12 +95,7 @@ export default function EditReview() {
 
       console.log("UPDATE REVIEW PAYLOAD => ", payload);
 
-      await axios.put(`${API}/restful/v1/api/reviews/${id}`, payload, {
-        headers: {
-         Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      await api.put(`/restful/v1/api/reviews/${id}`, payload);
 
       alert("Review updated successfully");
 

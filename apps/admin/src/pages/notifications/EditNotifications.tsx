@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate, useParams } from "react-router-dom";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function EditNotification() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   const [loading, setLoading] = useState(true);
 
@@ -23,14 +20,7 @@ export default function EditNotification() {
   // ================= FETCH =================
   const fetchNotification = async () => {
     try {
-      const res = await axios.get(
-        `${API}/restful/v1/api/notifications/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await api.get(`/restful/v1/api/notifications/${id}`);
 
       setForm(res.data?.data);
     } catch (err) {
@@ -55,19 +45,10 @@ export default function EditNotification() {
   // ================= UPDATE NOTIFICATION =================
   const handleUpdate = async () => {
     try {
-      await axios.put(
-        `${API}/restful/v1/api/notifications/${id}`,
-        {
-          title: form.title,
-          message: form.message,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await api.put(`/restful/v1/api/notifications/${id}`, {
+        title: form.title,
+        message: form.message,
+      });
 
       alert("Notification updated successfully");
       navigate("/notifications");
@@ -79,15 +60,7 @@ export default function EditNotification() {
   // ================= MARK AS READ =================
   const markAsRead = async () => {
     try {
-      await axios.put(
-        `${API}/restful/v1/api/notifications/${id}/read`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await api.put(`/restful/v1/api/notifications/${id}/read`, {});
 
       alert("Marked as read");
       fetchNotification();

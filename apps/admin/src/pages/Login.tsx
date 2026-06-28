@@ -52,7 +52,7 @@ export default function Login() {
             const res = await loginService(
                 values.email,
                 values.password,
-                fcmToken || ""
+                fcmToken ?? null
             );
 
             dispatch(loginSuccess(res));

@@ -4,11 +4,9 @@
 // ============================================
 
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import api from "../../../api/axios";
 import { Shield, Search, Plus, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-const API = import.meta.env.VITE_API_URL;
 
 interface Permission {
   permissionId: number;
@@ -28,9 +26,7 @@ export default function PermissionsList() {
     try {
       setLoading(true);
 
-      const res = await axios.get(
-        `${API}/restful/v1/api/permissions`
-      );
+      const res = await api.get(`/restful/v1/api/permissions`);
 
       setPermissions(res.data.data || []);
     } catch (err) {
@@ -49,14 +45,7 @@ export default function PermissionsList() {
     if (!confirm("Delete this permission?")) return;
 
     try {
-      await axios.delete(
-        `${API}/restful/v1/api/permissions/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await api.delete(`/restful/v1/api/permissions/${id}`);
 
       fetchPermissions();
     } catch (err) {

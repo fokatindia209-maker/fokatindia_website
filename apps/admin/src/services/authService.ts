@@ -9,7 +9,7 @@ import api from "../api/axios";
 export const loginService = async (
     email: string,
     password: string,
-    fcmToken: string
+    fcmToken: string | null
 ) => {
 
     const response = await api.post(
@@ -17,7 +17,7 @@ export const loginService = async (
         {
             email,
             password,
-            fcmToken
+            ...(fcmToken ? { fcmToken } : {}),
         }
     );
 
@@ -109,12 +109,7 @@ export const verifyOtpService = async (
 export const uploadDocument = async (formData: FormData) => {
     const response = await api.post(
         "/restful/v1/api/documents/upload",
-        formData,
-        {
-            headers: {
-                 Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
-        }
+        formData
     );
 
     return response.data.data;

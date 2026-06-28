@@ -1,8 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function CreateUser() {
   const navigate = useNavigate();
@@ -27,15 +25,12 @@ export default function CreateUser() {
     try {
       setLoading(true);
 
-      await axios.post(
-        `${API}/restful/v1/api/users/register`,
-        {
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          password: form.password,
-        }
-      );
+      await api.post(`/restful/v1/api/users/register`, {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        password: form.password,
+      });
 
       alert("User created successfully");
       navigate("/users");

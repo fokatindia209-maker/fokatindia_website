@@ -1,9 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, Briefcase } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function CreateService() {
   const navigate = useNavigate();
@@ -63,16 +61,9 @@ export default function CreateService() {
         data.append("file", file);
       }
 
-      await axios.post(
-        `${API}/restful/v1/api/services`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await api.post(`/restful/v1/api/services`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       alert("Service created successfully");
       navigate("/services");

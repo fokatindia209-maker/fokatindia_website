@@ -4,7 +4,7 @@
 // ============================================
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../api/axios";
 import {
   ShieldCheck,
   KeyRound,
@@ -15,15 +15,13 @@ import {
 
 import { useNavigate, useParams } from "react-router-dom";
 
-const API = import.meta.env.VITE_API_URL;
-
 interface Role {
-  id: number;
+  roleId: number;
   name: string;
 }
 
 interface Permission {
-  id: number;
+  permissionId: number;
   name: string;
 }
 
@@ -33,9 +31,7 @@ export default function EditRolePermissions() {
   const navigate = useNavigate();
 
   const [roles, setRoles] = useState<Role[]>([]);
-  const [permissions, setPermissions] = useState<
-    Permission[]
-  >([]);
+  const [permissions, setPermissions] = useState<Permission[]>([]);
 
   const [roleId, setRoleId] = useState("");
   const [permissionId, setPermissionId] = useState("");
@@ -50,9 +46,7 @@ export default function EditRolePermissions() {
   // ============================================
   const fetchRoles = async () => {
     try {
-      const res = await axios.get(
-        `${API}/restful/v1/api/roles`
-      );
+      const res = await api.get(`/restful/v1/api/roles`);
 
       setRoles(res.data.data || []);
     } catch (error) {
@@ -65,9 +59,7 @@ export default function EditRolePermissions() {
   // ============================================
   const fetchPermissions = async () => {
     try {
-      const res = await axios.get(
-        `${API}/restful/v1/api/permissions`
-      );
+      const res = await api.get(`/restful/v1/api/permissions`);
 
       setPermissions(res.data.data || []);
     } catch (error) {
@@ -80,8 +72,8 @@ export default function EditRolePermissions() {
   // ============================================
   const fetchRolePermission = async () => {
     try {
-      const res = await axios.get(
-        `${API}/restful/v1/api/role-permissions/${id}`
+      const res = await api.get(
+        `/restful/v1/api/role-permissions/${id}`
       );
 
       const data = res.data.data;
@@ -105,9 +97,7 @@ export default function EditRolePermissions() {
   // ============================================
   // UPDATE ROLE PERMISSION
   // ============================================
-  const handleUpdate = async (
-    e: React.FormEvent
-  ) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setLoading(true);
@@ -119,14 +109,9 @@ export default function EditRolePermissions() {
         permissionId: Number(permissionId),
       };
 
-      const res = await axios.put(
-        `${API}/restful/v1/api/role-permissions/${id}`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const res = await api.put(
+        `/restful/v1/api/role-permissions/${id}`,
+        payload
       );
 
       setMessage(
@@ -187,10 +172,7 @@ export default function EditRolePermissions() {
         </div>
 
         {/* FORM */}
-        <form
-          onSubmit={handleUpdate}
-          className="space-y-6"
-        >
+        <form onSubmit={handleUpdate} className="space-y-6">
           {/* ROLE */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -202,21 +184,14 @@ export default function EditRolePermissions() {
 
               <select
                 value={roleId}
-                onChange={(e) =>
-                  setRoleId(e.target.value)
-                }
+                onChange={(e) => setRoleId(e.target.value)}
                 required
                 className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
               >
-                <option value="">
-                  Choose Role
-                </option>
+                <option value="">Choose Role</option>
 
                 {roles.map((role) => (
-                  <option
-                    key={role.id}
-                    value={role.id}
-                  >
+                  <option key={role.roleId} value={role.roleId}>
                     {role.name}
                   </option>
                 ))}
@@ -235,20 +210,16 @@ export default function EditRolePermissions() {
 
               <select
                 value={permissionId}
-                onChange={(e) =>
-                  setPermissionId(e.target.value)
-                }
+                onChange={(e) => setPermissionId(e.target.value)}
                 required
                 className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
               >
-                <option value="">
-                  Choose Permission
-                </option>
+                <option value="">Choose Permission</option>
 
                 {permissions.map((permission) => (
                   <option
-                    key={permission.id}
-                    value={permission.id}
+                    key={permission.permissionId}
+                    value={permission.permissionId}
                   >
                     {permission.name}
                   </option>

@@ -21,10 +21,13 @@ import {
   KeyRound,
   UserCog,
   ShieldCheck,
+  LogOut,
 } from "lucide-react";
 
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { logout } from "../store/slices/authSlice";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -38,6 +41,13 @@ export default function Sidebar({
   setSidebarOpen,
 }: SidebarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  function handleLogout() {
+    dispatch(logout());
+    navigate("/login");
+  }
 
   // ============================================
   // SETTINGS
@@ -504,6 +514,25 @@ export default function Sidebar({
 
               </div>
             </div>
+          </div>
+
+          {/* ================================= */}
+          {/* LOGOUT */}
+          {/* ================================= */}
+
+          <div className="pt-4 pb-2">
+            <button
+              onClick={handleLogout}
+              className="
+                flex items-center gap-3
+                w-full px-4 py-3 rounded-xl
+                text-red-500 hover:bg-red-50
+                transition-all font-medium
+              "
+            >
+              <LogOut size={20} />
+              <span>Logout</span>
+            </button>
           </div>
 
         </nav>

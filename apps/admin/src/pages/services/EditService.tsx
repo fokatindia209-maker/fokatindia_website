@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Briefcase,
@@ -7,8 +7,6 @@ import {
   ArrowLeft,
   Loader2,
 } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 interface Service {
   id: number;
@@ -56,14 +54,7 @@ export default function EditService() {
       try {
         setLoading(true);
 
-        const res = await axios.get(
-          `${API}/restful/v1/api/services/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const res = await api.get(`/restful/v1/api/services/${id}`);
 
         setForm(res.data.data || res.data);
       } catch (err) {
@@ -83,21 +74,13 @@ export default function EditService() {
     try {
       setLoading(true);
 
-      await axios.put(
-        `${API}/restful/v1/api/services/${id}`,
-        {
-          ...form,
-          price: Number(form.price),
-          discountedPrice: Number(form.discountedPrice),
-          durationMinutes: Number(form.durationMinutes),
-          categoryId: Number(form.categoryId),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      await api.put(`/restful/v1/api/services/${id}`, {
+        ...form,
+        price: Number(form.price),
+        discountedPrice: Number(form.discountedPrice),
+        durationMinutes: Number(form.durationMinutes),
+        categoryId: Number(form.categoryId),
+      });
 
       alert("Service updated successfully");
       navigate("/services");

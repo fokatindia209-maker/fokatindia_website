@@ -9,13 +9,18 @@ import Register from "../pages/Register";
 import ForgotPassword from "../pages/ForgotPassword";
 import OtpLogin from "../pages/OtpLogin";
 import DocumentUpload from "../pages/DocumentUpload";
+import DocumentUnderReview from "../pages/DocumentUnderReview";
 
 // VENDOR
 import VendorDashboard from "../pages/vendor/dashboard/VendorDashboard";
 import VendorSubVendorList from "../pages/vendor/subvendors/VendorSubVendorList";
+import AddSubVendor from "../pages/vendor/subvendors/AddSubVendor";
 import VendorBookingList from "../pages/vendor/bookings/VendorBookingList";
+import VendorBookingDetails from "../pages/vendor/bookings/BookingDetails";
 import VendorCategoryList from "../pages/vendor/categories/VendorCategoryList";
 import VendorServiceList from "../pages/vendor/services/VendorServiceList";
+import AddService from "../pages/vendor/services/AddService";
+import EditService from "../pages/vendor/services/EditService";
 import VendorEarnings from "../pages/vendor/earnings/VendorEarnings";
 import Notifications from "../pages/vendor/notifications/Notifications";
 import Reviews from "../pages/vendor/reviews/Reviews";
@@ -24,10 +29,9 @@ import VendorProfile from "../pages/vendor/profile/VendorProfile";
 import Settings from "../pages/vendor/setting/Settings";
 import VendorMore from "../pages/vendor/more/VendorMore";
 
-// SUB VENDOR (you must create these pages)
+// SUB VENDOR
 import SubVendorDashboard from "../pages/subvendor/dashboard/SubVendorDashboard";
-// import SubVendorJobs from "../pages/subvendor/jobs/SubVendorJobs";
-// import SubVendorEarnings from "../pages/subvendor/earnings/SubVendorEarnings";
+import SubVendorBookingDetails from "../pages/subvendor/bookings/BookingDetails";
 
 import ProtectedRoute from "../components/ProtectedRoute";
 import SubVendorBookingList from "../pages/subvendor/bookings/SubVendorBookingList";
@@ -58,39 +62,31 @@ export default function AppRoutes() {
 
   const documentStatus = user?.documentStatus || localUser?.documentStatus;
 
+  // Helper: redirect logged-in user to the right page based on document status
+  const getDocumentRedirect = () => {
+    if (documentStatus === "SUBMITTED") return <Navigate to="/document_review" replace />;
+    if (documentStatus === "APPROVED") {
+      return role === "SUB_VENDOR"
+        ? <Navigate to="/subvendor/dashboard" replace />
+        : <Navigate to="/vendor/dashboard" replace />;
+    }
+    // PENDING or REJECTED
+    return <Navigate to="/document_upload" replace />;
+  };
+
   return (
     <BrowserRouter>
       <Routes>
         {/* ================= ROOT ================= */}
         <Route
           path="/"
-          element={
-            !isLoggedIn ? (
-              <Navigate to="/login" replace />
-            ) : documentStatus !== "APPROVED" ? (
-              <Navigate to="/document_upload" replace />
-            ) : role === "SUB_VENDOR" ? (
-              <Navigate to="/subvendor/dashboard" replace />
-            ) : (
-              <Navigate to="/vendor/dashboard" replace />
-            )
-          }
+          element={!isLoggedIn ? <Navigate to="/login" replace /> : getDocumentRedirect()}
         />
 
         {/* ================= LOGIN ================= */}
         <Route
           path="/login"
-          element={
-            !isLoggedIn ? (
-              <Login />
-            ) : documentStatus !== "APPROVED" ? (
-              <Navigate to="/document_upload" replace />
-            ) : role === "SUB_VENDOR" ? (
-              <Navigate to="/subvendor/dashboard" replace />
-            ) : (
-              <Navigate to="/vendor/dashboard" replace />
-            )
-          }
+          element={!isLoggedIn ? <Login /> : getDocumentRedirect()}
         />
 
         <Route path="/register" element={<Register />} />
@@ -99,11 +95,35 @@ export default function AppRoutes() {
 
         <Route path="/otp-login" element={<OtpLogin />} />
 
-        {/* ================= DOCUMENT ================= */}
+        {/* ================= DOCUMENT UPLOAD ================= */}
         <Route
           path="/document_upload"
           element={
-            !isLoggedIn ? <Navigate to="/login" replace /> : <DocumentUpload />
+            !isLoggedIn ? (
+              <Navigate to="/login" replace />
+            ) : documentStatus === "SUBMITTED" ? (
+              <Navigate to="/document_review" replace />
+            ) : documentStatus === "APPROVED" ? (
+              getDocumentRedirect()
+            ) : (
+              <DocumentUpload />
+            )
+          }
+        />
+
+        {/* ================= DOCUMENT REVIEW ================= */}
+        <Route
+          path="/document_review"
+          element={
+            !isLoggedIn ? (
+              <Navigate to="/login" replace />
+            ) : documentStatus === "APPROVED" ? (
+              getDocumentRedirect()
+            ) : documentStatus !== "SUBMITTED" ? (
+              <Navigate to="/document_upload" replace />
+            ) : (
+              <DocumentUnderReview />
+            )
           }
         />
 
@@ -130,10 +150,28 @@ export default function AppRoutes() {
         />
 
         <Route
+          path="/vendor/subvendors/create"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <AddSubVendor />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/vendor/bookings"
           element={
             <ProtectedRoute allowedRole="VENDOR">
               <VendorBookingList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/bookings/:id"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <VendorBookingDetails />
             </ProtectedRoute>
           }
         />
@@ -152,6 +190,24 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute allowedRole="VENDOR">
               <VendorServiceList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/services/create"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <AddService />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/services/edit/:id"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <EditService />
             </ProtectedRoute>
           }
         />
@@ -237,6 +293,15 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute allowedRole="SUB_VENDOR">
               <SubVendorBookingList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/subvendor/bookings/:id"
+          element={
+            <ProtectedRoute allowedRole="SUB_VENDOR">
+              <SubVendorBookingDetails />
             </ProtectedRoute>
           }
         />

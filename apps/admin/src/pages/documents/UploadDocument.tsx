@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import {
   Upload,
@@ -8,9 +8,6 @@ import {
   ArrowLeft,
   Loader2,
 } from "lucide-react";
-
-
-const API = import.meta.env.VITE_API_URL;
 export default function UploadDocument() {
   const navigate = useNavigate();
 
@@ -71,13 +68,8 @@ export default function UploadDocument() {
         data.append("file", form.file);
       }
 
-      const res = await axios.post(`${API}/restful/v1/api/documents/upload`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem(
-            "token"
-          )}`,
-        },
+      const res = await api.post(`/restful/v1/api/documents/upload`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       alert(

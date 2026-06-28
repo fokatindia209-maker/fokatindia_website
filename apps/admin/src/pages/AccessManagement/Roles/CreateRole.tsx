@@ -4,11 +4,9 @@
 // ============================================
 
 import { useState } from "react";
-import axios from "axios";
+import api from "../../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { Shield, Save, ArrowLeft } from "lucide-react";
-
-const API = import.meta.env.VITE_API_URL;
 
 export default function CreateRole() {
   const navigate = useNavigate();
@@ -39,15 +37,7 @@ export default function CreateRole() {
     try {
       setLoading(true);
 
-      await axios.post(
-        `${API}/restful/v1/api/roles`,
-        form,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await api.post(`/restful/v1/api/roles`, form);
 
       alert("Role created successfully");
 

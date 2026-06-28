@@ -3,15 +3,16 @@ import {
 } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 interface User {
-
     userId?: number;
     name?: string;
     email?: string;
     phone?: string;
     status?: string;
     token?: string;
-    role?: string; // ADD
-    documentStatus?: string; // ✅ ADD THIS
+    role?: string;
+    documentStatus?: string;
+    vendorId?: number;
+    subVendorId?: number;
 }
 
 interface AuthState {
