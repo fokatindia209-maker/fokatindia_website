@@ -12,15 +12,20 @@ import {
   Share2,
   Info,
   LogIn,
+  UserX,
+  AlertTriangle,
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import api from "../api/axios";
 
 interface User {
+  userId: number;
   name: string;
   email: string;
   phone: string;
+  status: string;
 }
 
 export default function Settings() {
@@ -28,6 +33,9 @@ export default function Settings() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [showStatusConfirm, setShowStatusConfirm] = useState(false);
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [statusError, setStatusError] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -136,14 +144,88 @@ export default function Settings() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-
     setIsLoggedIn(false);
-
     navigate("/login");
+  };
+
+  const isActive = user?.status === "ACTIVE";
+
+  const handleToggleStatus = async () => {
+    if (!user?.userId) return;
+    setStatusLoading(true);
+    setStatusError("");
+    try {
+      const endpoint = isActive
+        ? `/users/${user.userId}/deactivate`
+        : `/users/${user.userId}/activate`;
+      await api.put(endpoint);
+
+      if (isActive) {
+        // deactivated — log out
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
+      } else {
+        // reactivated — update status in localStorage and close modal
+        const updated = { ...user, status: "ACTIVE" };
+        localStorage.setItem("user", JSON.stringify(updated));
+        setUser(updated);
+        setShowStatusConfirm(false);
+      }
+    } catch {
+      setStatusError(
+        isActive
+          ? "Failed to deactivate account. Please try again."
+          : "Failed to activate account. Please try again."
+      );
+      setStatusLoading(false);
+    }
   };
 
   return (
     <UserLayout>
+      {/* Activate / Deactivate Confirmation Modal */}
+      {showStatusConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
+            <div className="flex flex-col items-center text-center gap-3">
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center ${isActive ? "bg-red-100" : "bg-green-100"}`}>
+                <AlertTriangle size={28} className={isActive ? "text-red-600" : "text-green-600"} />
+              </div>
+              <h2 className="text-lg font-bold text-gray-900">
+                {isActive ? "Deactivate Account?" : "Activate Account?"}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {isActive
+                  ? "Your account will be deactivated and you'll be logged out immediately. You can reactivate it anytime from Settings."
+                  : "Your account will be reactivated immediately and you can continue using FokatIndia normally."}
+              </p>
+              {statusError && (
+                <p className="text-sm text-red-600">{statusError}</p>
+              )}
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => { setShowStatusConfirm(false); setStatusError(""); }}
+                disabled={statusLoading}
+                className="flex-1 py-2.5 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleToggleStatus}
+                disabled={statusLoading}
+                className={`flex-1 py-2.5 rounded-xl text-white font-medium disabled:opacity-50 ${isActive ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}`}
+              >
+                {statusLoading
+                  ? (isActive ? "Deactivating..." : "Activating...")
+                  : (isActive ? "Yes, Deactivate" : "Yes, Activate")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-6 py-4 px-4">
         {/* PROFILE */}
         {isLoggedIn && (
@@ -241,6 +323,24 @@ export default function Settings() {
             </button>
           )}
         </div>
+
+        {/* ACTIVATE / DEACTIVATE ACCOUNT */}
+        {isLoggedIn && (
+          <div className="bg-white rounded-xl shadow overflow-hidden">
+            <button
+              onClick={() => setShowStatusConfirm(true)}
+              className={`w-full flex items-center gap-3 px-4 py-4 ${isActive ? "text-red-500 hover:bg-red-50" : "text-green-600 hover:bg-green-50"}`}
+            >
+              <UserX size={18} />
+              <div className="text-left">
+                <p className="font-medium">{isActive ? "Deactivate Account" : "Activate Account"}</p>
+                <p className="text-xs text-gray-400">
+                  {isActive ? "Temporarily disable your account" : "Reactivate your account"}
+                </p>
+              </div>
+            </button>
+          </div>
+        )}
       </div>
     </UserLayout>
   );

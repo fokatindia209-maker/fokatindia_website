@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "966340445316",
+    "project_id": "fokatindia-21620",
+    "storage_bucket": "fokatindia-21620.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:966340445316:android:531c6724d983dafe40eed1",
+        "android_client_info": {
+          "package_name": "com.fokatindia.user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8qyMieXUjRuy7RQUWA4nS2G_isR0cR6I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

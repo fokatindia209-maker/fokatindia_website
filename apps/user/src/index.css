@@ -1,2 +1,7 @@
 @import "tailwindcss";
 
+/* Hide the floating reCAPTCHA badge — attribution text is shown inline on the OTP page instead */
+.grecaptcha-badge {
+  visibility: hidden !important;
+}
+

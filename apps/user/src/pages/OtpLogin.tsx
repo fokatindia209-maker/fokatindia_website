@@ -309,6 +309,29 @@ export default function OtpLogin() {
                 )}
 
             </div>
+
+            {/* Required attribution when the reCAPTCHA badge is hidden via CSS */}
+            <p className="text-center text-xs text-gray-400 mt-4">
+                Protected by reCAPTCHA —{" "}
+                <a
+                    href="https://policies.google.com/privacy"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline hover:text-gray-600"
+                >
+                    Privacy
+                </a>{" "}
+                &{" "}
+                <a
+                    href="https://policies.google.com/terms"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline hover:text-gray-600"
+                >
+                    Terms
+                </a>
+            </p>
+
         </AuthLayout>
     );
 }
