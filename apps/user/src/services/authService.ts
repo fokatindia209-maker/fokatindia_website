@@ -91,3 +91,23 @@ export const verifyOtpService = async (
 
     return response.data.data;
 };
+
+// ===============================
+// PHONE LOGIN (after Firebase OTP)
+// ===============================
+
+export const phoneLoginService = async (
+    phone: string,
+    fcmToken?: string
+) => {
+
+    const response = await api.post(
+        "/users/phone-login",
+        {
+            phone,
+            ...(fcmToken ? { fcmToken } : {}),
+        }
+    );
+
+    return response.data.data;
+};

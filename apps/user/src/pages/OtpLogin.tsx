@@ -1,98 +1,166 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import type { ConfirmationResult } from "firebase/auth";
 
 import {
-    sendOtpService,
-    verifyOtpService
-} from "../services/authService";
+    initRecaptchaVerifier,
+    sendFirebaseOtp,
+    verifyFirebaseOtp,
+    formatToE164,
+    firebaseErrorMessage,
+} from "../services/firebaseAuthService";
+import { phoneLoginService } from "../services/authService";
+import { loginSuccess } from "../store/slices/authSlice";
+import type { AppDispatch } from "../store/store";
 
 import Button from "../components/Button";
 import AuthLayout from "../components/AuthLayout";
 
-export default function OtpLogin() {
+const RESEND_SECONDS = 60;
 
+const sendOtpSchema = Yup.object({
+    mobile: Yup.string()
+        .matches(/^\d{10}$/, "Enter a valid 10-digit mobile number")
+        .required("Mobile number is required"),
+});
+
+const verifyOtpSchema = Yup.object({
+    otp: Yup.string()
+        .matches(/^\d{6}$/, "OTP must be exactly 6 digits")
+        .required("OTP is required"),
+});
+
+export default function OtpLogin() {
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
     const [step, setStep] = useState<1 | 2>(1);
     const [mobile, setMobile] = useState("");
+    const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+    const [countdown, setCountdown] = useState(0);
+    const [sendError, setSendError] = useState("");
+    const [verifyError, setVerifyError] = useState("");
+
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    // Clear the countdown timer on unmount
+    useEffect(() => {
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+        };
+    }, []);
+
+    const startCountdown = () => {
+        if (timerRef.current) clearInterval(timerRef.current);
+        setCountdown(RESEND_SECONDS);
+        timerRef.current = setInterval(() => {
+            setCountdown((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timerRef.current!);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+    };
 
     // ========================
-    // VALIDATION SCHEMAS
-    // ========================
-
-    const sendOtpSchema = Yup.object({
-        mobile: Yup.string()
-            .matches(/^\d{10}$/, "Enter valid 10-digit mobile number")
-            .required("Mobile is required"),
-    });
-
-    const verifyOtpSchema = Yup.object({
-        otp: Yup.string()
-            .length(6, "OTP must be 6 digits")
-            .required("OTP is required"),
-    });
-
-    // ========================
-    // SEND OTP
+    // SEND OTP (Step 1)
     // ========================
     const handleSendOtp = async (
         values: { mobile: string },
-        { setSubmitting, setFieldError }: any
+        { setSubmitting }: any
     ) => {
-
+        setSendError("");
         try {
-            await sendOtpService(values.mobile);
+            const verifier = initRecaptchaVerifier("recaptcha-container");
+            const phoneE164 = formatToE164(values.mobile);
+            const result = await sendFirebaseOtp(phoneE164, verifier);
 
+            setConfirmationResult(result);
             setMobile(values.mobile);
             setStep(2);
-
+            startCountdown();
         } catch (err: any) {
-
-            setFieldError(
-                "mobile",
-                err?.response?.data?.message || "Failed to send OTP"
-            );
-
+            setSendError(firebaseErrorMessage(err));
         } finally {
             setSubmitting(false);
         }
     };
 
     // ========================
-    // VERIFY OTP
+    // RESEND OTP
+    // ========================
+    const handleResendOtp = async () => {
+        setSendError("");
+        setVerifyError("");
+        try {
+            const verifier = initRecaptchaVerifier("recaptcha-container");
+            const phoneE164 = formatToE164(mobile);
+            const result = await sendFirebaseOtp(phoneE164, verifier);
+            setConfirmationResult(result);
+            startCountdown();
+        } catch (err: any) {
+            setSendError(firebaseErrorMessage(err));
+        }
+    };
+
+    // ========================
+    // VERIFY OTP (Step 2)
     // ========================
     const handleVerifyOtp = async (
         values: { otp: string },
-        { setSubmitting, setFieldError }: any
+        { setSubmitting }: any
     ) => {
+        setVerifyError("");
+
+        if (!confirmationResult) {
+            setVerifyError("Session expired. Go back and request a new OTP.");
+            setSubmitting(false);
+            return;
+        }
 
         try {
+            // Step A: Firebase verifies the OTP
+            await verifyFirebaseOtp(confirmationResult, values.otp);
 
-            const res = await verifyOtpService(
-                mobile,
-                values.otp
-            );
+            // Step B: Backend issues our app JWT for this phone number
+            const fcmToken = localStorage.getItem("fcmToken") ?? "";
+            const userData = await phoneLoginService(mobile, fcmToken);
 
-            localStorage.setItem("token", res.token);
-
+            dispatch(loginSuccess(userData));
             navigate("/dashboard");
-
         } catch (err: any) {
-
-            setFieldError(
-                "otp",
-                err?.response?.data?.message || "Invalid OTP"
-            );
-
+            // Firebase errors have a `code` field; backend errors come from axios
+            if (err?.code) {
+                setVerifyError(firebaseErrorMessage(err));
+            } else {
+                setVerifyError(
+                    err?.response?.data?.message || "Login failed. Please try again."
+                );
+            }
         } finally {
             setSubmitting(false);
         }
+    };
+
+    const handleChangeNumber = () => {
+        setStep(1);
+        setSendError("");
+        setVerifyError("");
+        setConfirmationResult(null);
+        if (timerRef.current) clearInterval(timerRef.current);
+        setCountdown(0);
     };
 
     return (
         <AuthLayout title="OTP Login">
+
+            {/* Invisible reCAPTCHA mount point — must stay in the DOM */}
+            <div id="recaptcha-container" />
 
             <div className="space-y-5">
 
@@ -107,7 +175,7 @@ export default function OtpLogin() {
                 </div>
 
                 {/* ===================== */}
-                {/* STEP 1: SEND OTP */}
+                {/* STEP 1: ENTER MOBILE  */}
                 {/* ===================== */}
                 {step === 1 && (
                     <Formik
@@ -118,17 +186,36 @@ export default function OtpLogin() {
                         {({ isSubmitting }) => (
                             <Form className="space-y-4">
 
-                                <Field
-                                    name="mobile"
-                                    placeholder="Enter mobile number"
-                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                                />
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Mobile Number
+                                    </label>
 
-                                <ErrorMessage
-                                    name="mobile"
-                                    component="div"
-                                    className="text-red-500 text-sm"
-                                />
+                                    {/* Phone input with +91 prefix badge */}
+                                    <div className="flex items-center border rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-blue-400">
+                                        <span className="px-3 py-2 bg-gray-100 text-gray-600 text-sm border-r select-none">
+                                            +91
+                                        </span>
+                                        <Field
+                                            name="mobile"
+                                            type="tel"
+                                            inputMode="numeric"
+                                            maxLength={10}
+                                            placeholder="10-digit mobile number"
+                                            className="flex-1 px-3 py-2 focus:outline-none text-sm"
+                                        />
+                                    </div>
+
+                                    <ErrorMessage
+                                        name="mobile"
+                                        component="div"
+                                        className="text-red-500 text-sm mt-1"
+                                    />
+                                </div>
+
+                                {sendError && (
+                                    <p className="text-red-500 text-sm">{sendError}</p>
+                                )}
 
                                 <Button
                                     type="submit"
@@ -141,7 +228,7 @@ export default function OtpLogin() {
                 )}
 
                 {/* ===================== */}
-                {/* STEP 2: VERIFY OTP */}
+                {/* STEP 2: VERIFY OTP    */}
                 {/* ===================== */}
                 {step === 2 && (
                     <Formik
@@ -152,32 +239,66 @@ export default function OtpLogin() {
                         {({ isSubmitting }) => (
                             <Form className="space-y-4">
 
-                                <div className="text-sm text-gray-600">
-                                    OTP sent to: <b>{mobile}</b>
+                                <p className="text-sm text-gray-600 text-center">
+                                    OTP sent to <span className="font-semibold">+91 {mobile}</span>
+                                </p>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Enter OTP
+                                    </label>
+                                    <Field
+                                        name="otp"
+                                        type="text"
+                                        inputMode="numeric"
+                                        maxLength={6}
+                                        placeholder="• • • • • •"
+                                        className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-center tracking-[0.5em] text-lg font-semibold"
+                                    />
+                                    <ErrorMessage
+                                        name="otp"
+                                        component="div"
+                                        className="text-red-500 text-sm mt-1"
+                                    />
                                 </div>
 
-                                <Field
-                                    name="otp"
-                                    placeholder="Enter OTP"
-                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400"
-                                />
+                                {verifyError && (
+                                    <p className="text-red-500 text-sm">{verifyError}</p>
+                                )}
 
-                                <ErrorMessage
-                                    name="otp"
-                                    component="div"
-                                    className="text-red-500 text-sm"
-                                />
+                                {sendError && (
+                                    <p className="text-red-500 text-sm">{sendError}</p>
+                                )}
 
                                 <Button
                                     type="submit"
                                     title={isSubmitting ? "Verifying..." : "Verify OTP"}
                                 />
 
-                                {/* BACK OPTION */}
+                                {/* RESEND / COUNTDOWN */}
+                                <div className="text-center text-sm">
+                                    {countdown > 0 ? (
+                                        <span className="text-gray-500">
+                                            Resend OTP in{" "}
+                                            <span className="font-semibold text-blue-600">
+                                                {countdown}s
+                                            </span>
+                                        </span>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={handleResendOtp}
+                                            className="text-blue-600 hover:underline font-medium"
+                                        >
+                                            Resend OTP
+                                        </button>
+                                    )}
+                                </div>
+
                                 <button
                                     type="button"
-                                    onClick={() => setStep(1)}
-                                    className="text-sm text-blue-600 hover:underline w-full text-center"
+                                    onClick={handleChangeNumber}
+                                    className="text-sm text-gray-500 hover:text-blue-600 hover:underline w-full text-center"
                                 >
                                     Change mobile number
                                 </button>
@@ -188,7 +309,6 @@ export default function OtpLogin() {
                 )}
 
             </div>
-
         </AuthLayout>
     );
 }
