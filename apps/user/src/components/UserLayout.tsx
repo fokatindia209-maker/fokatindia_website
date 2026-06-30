@@ -13,7 +13,7 @@ export default function UserLayout({ children }: Props) {
             {/* TOP NAVBAR */}
             <Navbar />
             {/* MAIN CONTENT */}
-            <main className="pt-16 md:ml-16 md:mr-16 pb-20">
+            <main className="pt-[calc(4rem+env(safe-area-inset-top))] md:ml-16 md:mr-16 pb-[calc(5rem+env(safe-area-inset-bottom))]">
                 {children}
             </main>
             {/* MOBILE BOTTOM NAV */}

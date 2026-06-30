@@ -226,7 +226,7 @@ export default function Settings() {
         </div>
       )}
 
-      <div className="space-y-6 py-4 px-4">
+      <div className="space-y-6 pt-4 pb-36 px-4">
         {/* PROFILE */}
         {isLoggedIn && (
           <div className="bg-white rounded-2xl shadow p-5">
@@ -303,44 +303,61 @@ export default function Settings() {
           </div>
         ))}
 
-        {/* LOGIN / LOGOUT */}
+        {/* ACCOUNT ACTIONS */}
         <div className="bg-white rounded-xl shadow overflow-hidden">
+          <div className="px-4 py-3 bg-gray-50 font-semibold text-gray-700">
+            Account
+          </div>
           {isLoggedIn ? (
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-4 text-red-600 hover:bg-red-50"
-            >
-              <LogOut size={18} />
-              Logout
-            </button>
+            <>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center justify-between px-4 py-4 text-red-600 hover:bg-red-50 border-b border-gray-100"
+              >
+                <div className="flex items-center gap-3">
+                  <LogOut size={18} />
+                  <span className="font-medium">Logout</span>
+                </div>
+                <ChevronRight size={18} />
+              </button>
+
+              <button
+                onClick={() => setShowStatusConfirm(true)}
+                className={`w-full flex items-center justify-between px-4 py-4 ${
+                  isActive
+                    ? "text-red-500 hover:bg-red-50"
+                    : "text-green-600 hover:bg-green-50"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <UserX size={18} />
+                  <div className="text-left">
+                    <p className="font-medium">
+                      {isActive ? "Deactivate Account" : "Activate Account"}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {isActive
+                        ? "Temporarily disable your account"
+                        : "Reactivate your account"}
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight size={18} />
+              </button>
+            </>
           ) : (
             <button
               onClick={() => navigate("/login")}
-              className="w-full flex items-center gap-3 px-4 py-4 text-blue-600 hover:bg-blue-50"
+              className="w-full flex items-center justify-between px-4 py-4 text-blue-600 hover:bg-blue-50"
             >
-              <LogIn size={18} />
-              Login
+              <div className="flex items-center gap-3">
+                <LogIn size={18} />
+                <span className="font-medium">Login</span>
+              </div>
+              <ChevronRight size={18} />
             </button>
           )}
         </div>
-
-        {/* ACTIVATE / DEACTIVATE ACCOUNT */}
-        {isLoggedIn && (
-          <div className="bg-white rounded-xl shadow overflow-hidden">
-            <button
-              onClick={() => setShowStatusConfirm(true)}
-              className={`w-full flex items-center gap-3 px-4 py-4 ${isActive ? "text-red-500 hover:bg-red-50" : "text-green-600 hover:bg-green-50"}`}
-            >
-              <UserX size={18} />
-              <div className="text-left">
-                <p className="font-medium">{isActive ? "Deactivate Account" : "Activate Account"}</p>
-                <p className="text-xs text-gray-400">
-                  {isActive ? "Temporarily disable your account" : "Reactivate your account"}
-                </p>
-              </div>
-            </button>
-          </div>
-        )}
       </div>
     </UserLayout>
   );

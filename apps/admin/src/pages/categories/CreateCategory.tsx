@@ -43,7 +43,7 @@ export default function CreateCategory() {
         data.append(k, String(v))
       );
 
-      if (file) data.append("image", file);
+      if (file) data.append("file", file);
 
       const res = await api.post(`/restful/v1/api/categories/create`, data, {
         headers: { "Content-Type": "multipart/form-data" },

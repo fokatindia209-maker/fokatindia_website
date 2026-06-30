@@ -55,6 +55,11 @@ export default function Login() {
                 fcmToken ?? null
             );
 
+            if (res.role?.toUpperCase() !== "ADMIN") {
+                setFieldError("email", "Access denied. Admins only.");
+                return;
+            }
+
             dispatch(loginSuccess(res));
             navigate("/");
 

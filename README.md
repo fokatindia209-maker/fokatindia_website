@@ -26,3 +26,8 @@ For FCM to work on Android, add your google-services.json file (download from Fi
 
 
 android/app/google-services.json
+
+#for sync
+npm run build
+npx cap sync androidy
+npx cap copy android

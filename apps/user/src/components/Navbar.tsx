@@ -24,7 +24,8 @@ export default function Navbar() {
   ];
 
   return (
-    <div className="fixed top-0 left-0 right-0 h-16 bg-white border-b shadow-sm flex items-center justify-between px-4 md:px-16 z-50">
+    <div className="fixed top-0 left-0 right-0 bg-white border-b shadow-sm z-50 pt-[env(safe-area-inset-top)]">
+    <div className="h-16 flex items-center justify-between px-4 md:px-16">
 
       {/* LEFT SIDE */}
       <div className="flex items-center gap-0">
@@ -106,6 +107,7 @@ export default function Navbar() {
 
       </div>
 
+    </div>
     </div>
   );
 }

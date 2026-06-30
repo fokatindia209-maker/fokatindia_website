@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import type { ConfirmationResult } from "firebase/auth";
@@ -36,6 +36,8 @@ const verifyOtpSchema = Yup.object({
 export default function OtpLogin() {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
+    const location = useLocation();
+    const redirectTo = (location.state as { redirectTo?: string })?.redirectTo || "/dashboard";
 
     const [step, setStep] = useState<1 | 2>(1);
     const [mobile, setMobile] = useState("");
@@ -132,7 +134,7 @@ export default function OtpLogin() {
             const userData = await phoneLoginService(mobile, fcmToken);
 
             dispatch(loginSuccess(userData));
-            navigate("/dashboard");
+            navigate(redirectTo, { replace: true });
         } catch (err: any) {
             // Firebase errors have a `code` field; backend errors come from axios
             if (err?.code) {

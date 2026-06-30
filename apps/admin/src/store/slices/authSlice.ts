@@ -11,6 +11,7 @@ interface User {
     status?: string;
     token?: string;
     documentStatus?: string; // ✅ ADD THIS
+    role?: string;
 }
 
 interface AuthState {

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -27,6 +27,8 @@ export default function Login() {
 
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
+    const location = useLocation();
+    const redirectTo = (location.state as { redirectTo?: string })?.redirectTo || "/dashboard";
 
     const initialValues: LoginForm = {
         email: "",
@@ -47,7 +49,7 @@ export default function Login() {
             );
 
             dispatch(loginSuccess(res));
-            navigate("/addresses");
+            navigate(redirectTo, { replace: true });
         } catch (err: any) {
             setFieldError(
                 "email",

@@ -28,15 +28,35 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import Notifications from "../pages/Notifications";
 import Reviews from "../pages/Reviews";
 
+function isLoggedIn() {
+  return !!localStorage.getItem("token");
+}
+
 export default function AppRoutes() {
   return (
     <Routes>
 
       {/* ================= ROOT ================= */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route
+        path="/"
+        element={
+          isLoggedIn() ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
 
       {/* ================= PUBLIC ================= */}
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/categories" element={<Categories />} />
       <Route path="/service/:categoryId" element={<Services />} />
       <Route path="/serviceDetails/:id" element={<ServiceDetail />} />
