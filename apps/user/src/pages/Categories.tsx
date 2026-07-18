@@ -78,11 +78,13 @@ export default function Categories() {
                 // onClick={() => navigate(`/service/${cat.id}`)}
                 className="bg-white rounded-2xl shadow hover:shadow-md transition cursor-pointer p-4 text-center"
               >
-                <img
-                  src={cat.imageUrl}
-                  alt={cat.name}
-                  className="w-20 h-20 mx-auto object-cover rounded-lg"
-                />
+                <div className="w-20 h-20 mx-auto flex items-center justify-center">
+                  <img
+                    src={cat.imageUrl}
+                    alt={cat.name}
+                    className="max-w-full max-h-full object-contain rounded-lg"
+                  />
+                </div>
 
                 <p className="mt-3 font-semibold text-gray-700">
                   {cat.name}
