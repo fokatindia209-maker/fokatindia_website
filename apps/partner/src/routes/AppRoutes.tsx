@@ -16,9 +16,12 @@ import ProfileSetup from "../pages/ProfileSetup";
 import VendorDashboard from "../pages/vendor/dashboard/VendorDashboard";
 import VendorSubVendorList from "../pages/vendor/subvendors/VendorSubVendorList";
 import AddSubVendor from "../pages/vendor/subvendors/AddSubVendor";
+import SubVendorDetails from "../pages/vendor/subvendors/SubVendorDetails";
 import VendorBookingList from "../pages/vendor/bookings/VendorBookingList";
 import VendorBookingDetails from "../pages/vendor/bookings/BookingDetails";
 import VendorCategoryList from "../pages/vendor/categories/VendorCategoryList";
+import CreateCategory from "../pages/vendor/categories/CreateCategory";
+import EditCategory from "../pages/vendor/categories/EditCategory";
 import VendorServiceList from "../pages/vendor/services/VendorServiceList";
 import AddService from "../pages/vendor/services/AddService";
 import EditService from "../pages/vendor/services/EditService";
@@ -45,6 +48,8 @@ import SubVendorProfile from "../pages/subvendor/profile/SubVendorProfile";
 import SubSettings from "../pages/subvendor/setting/SubSettings";
 import SubVendorCategoryList from "../pages/subvendor/categories/SubVendorCategoryList";
 import SubVendorServiceList from "../pages/subvendor/services/SubVendorServiceList";
+import SubVendorAddService from "../pages/subvendor/services/AddService";
+import SubVendorEditService from "../pages/subvendor/services/EditService";
 
 export default function AppRoutes() {
   // const token = useSelector(
@@ -183,6 +188,15 @@ export default function AppRoutes() {
         />
 
         <Route
+          path="/vendor/subvendors/:id"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <SubVendorDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/vendor/bookings"
           element={
             <ProtectedRoute allowedRole="VENDOR">
@@ -205,6 +219,24 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute allowedRole="VENDOR">
               <VendorCategoryList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/categories/create"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <CreateCategory />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vendor/categories/edit/:id"
+          element={
+            <ProtectedRoute allowedRole="VENDOR">
+              <EditCategory />
             </ProtectedRoute>
           }
         />
@@ -345,6 +377,24 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute allowedRole="SUB_VENDOR">
               <SubVendorServiceList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/subvendor/services/create"
+          element={
+            <ProtectedRoute allowedRole="SUB_VENDOR">
+              <SubVendorAddService />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/subvendor/services/edit/:id"
+          element={
+            <ProtectedRoute allowedRole="SUB_VENDOR">
+              <SubVendorEditService />
             </ProtectedRoute>
           }
         />

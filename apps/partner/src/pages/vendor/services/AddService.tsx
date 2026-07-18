@@ -59,6 +59,8 @@ export default function AddService() {
 
     try {
       setSubmitting(true);
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+
       const fd = new FormData();
       fd.append("categoryId", form.categoryId);
       fd.append("name", form.name);
@@ -71,6 +73,7 @@ export default function AddService() {
       fd.append("active", form.active);
       if (form.slug) fd.append("slug", form.slug);
       if (file) fd.append("file", file);
+      if (user.vendorId) fd.append("vendorId", String(user.vendorId));
 
       await api.post("/restful/v1/api/services", fd, {
         headers: { "Content-Type": "multipart/form-data" },

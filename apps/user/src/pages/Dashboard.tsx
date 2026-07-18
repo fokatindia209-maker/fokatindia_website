@@ -157,17 +157,17 @@ export default function Dashboard() {
                     navigate(`/service/${item.id}`);
                   }}
                   // onClick={() => navigate(`/service/${item.id}`)}
-                  className="bg-white rounded-xl p-3 text-center shadow hover:shadow-md active:scale-95 transition cursor-pointer"
+                  className="bg-gradient-to-br p-4 from-white to-slate-100 rounded-xl  text-center shadow hover:shadow-md active:scale-95 transition cursor-pointer"
                 >
                   <img
                     src={item.imageUrl}
                     alt={item.name}
-                    className="w-14 h-14 mx-auto object-cover rounded-lg"
+                    className="w-full h-full mx-auto object-cover rounded-lg"
                   />
 
-                  <p className="text-xs mt-2 font-medium">
+                  {/* <p className="text-xs mt-2 font-medium">
                     {item.name}
-                  </p>
+                  </p> */}
                 </div>
               ))}
             </div>
