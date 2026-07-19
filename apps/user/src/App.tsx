@@ -3,10 +3,14 @@ import { Toaster } from "react-hot-toast";
 import AppRoutes from "./routes/AppRoutes";
 import { onMessageListener } from "./firebase";
 import useAndroidBackHandler from "./hooks/useAndroidBackHandler";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { initCrashReporting } from "./lib/crashReporting";
 
 function App() {
 
    useEffect(() => {
+        initCrashReporting();
+
         // Listen foreground notifications globally
         onMessageListener()
             .then((payload: any) => {
@@ -20,10 +24,10 @@ function App() {
     useAndroidBackHandler();
 
     return (
-        <>
+        <ErrorBoundary>
             <Toaster position="bottom-center" />
             <AppRoutes />
-        </>
+        </ErrorBoundary>
     );
 }
 
