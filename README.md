@@ -29,5 +29,5 @@ android/app/google-services.json
 
 #for sync
 npm run build
-npx cap sync androidy
+npx cap sync android
 npx cap copy android

@@ -45,7 +45,7 @@ interface Service {
 
 function CategorySkeleton() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
       {Array.from({ length: 6 }).map((_, i) => (
         <div key={i} className="rounded-xl bg-white shadow p-3 animate-pulse">
           <div className="aspect-square w-full rounded-lg bg-gray-200" />
@@ -369,7 +369,7 @@ export default function Dashboard() {
               No categories available right now
             </p>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
               {categories.map((item) => (
                 <div
                   key={item.id}

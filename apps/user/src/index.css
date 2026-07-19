@@ -5,3 +5,27 @@
   visibility: hidden !important;
 }
 
+/* Mobile/app view scrolls by touch, so the scrollbar track is just visual noise — hide it,
+   scrolling itself keeps working. Desktop web keeps its normal scrollbar. */
+@media (max-width: 768px) {
+  * {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Edge legacy */
+  }
+
+  *::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Android WebView */
+  }
+}
+
+/* Auth screens (login/register/forgot-password/otp): scrolling only kicks in if the
+   content is taller than the screen; the scrollbar track itself stays hidden either way. */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
