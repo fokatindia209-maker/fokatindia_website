@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import logo from "../assets/logo.png";
 
 interface Props {
@@ -12,9 +13,26 @@ export default function AuthLayout({
     children
 }: Props) {
 
+    // Auth screens own their own scroll region (below); prevent the document
+    // itself from also scrolling/bouncing, which would show blank space above
+    // the mobile status bar instead of the gradient staying pinned below it.
+    useEffect(() => {
+        const { documentElement, body } = document;
+        const prevHtmlOverflow = documentElement.style.overflow;
+        const prevBodyOverflow = body.style.overflow;
+
+        documentElement.style.overflow = "hidden";
+        body.style.overflow = "hidden";
+
+        return () => {
+            documentElement.style.overflow = prevHtmlOverflow;
+            body.style.overflow = prevBodyOverflow;
+        };
+    }, []);
+
     return (
         <div
-            className="hide-scrollbar relative min-h-[100dvh] w-full overflow-y-auto flex items-center justify-center px-4 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700"
+            className="hide-scrollbar relative min-h-[100dvh] w-full overflow-x-hidden overflow-y-auto overscroll-y-none flex items-center justify-center px-4 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700"
             style={{
                 paddingTop: "max(2.5rem, env(safe-area-inset-top))",
                 paddingBottom: "max(2.5rem, env(safe-area-inset-bottom))",

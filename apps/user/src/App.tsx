@@ -1,6 +1,8 @@
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import AppRoutes from "./routes/AppRoutes";
 import { onMessageListener } from "./firebase";
+import useAndroidBackHandler from "./hooks/useAndroidBackHandler";
 
 function App() {
 
@@ -15,8 +17,14 @@ function App() {
             .catch((err: any) => console.log(err));
     }, []);
 
-    
-    return <AppRoutes />;
+    useAndroidBackHandler();
+
+    return (
+        <>
+            <Toaster position="bottom-center" />
+            <AppRoutes />
+        </>
+    );
 }
 
 export default App;
