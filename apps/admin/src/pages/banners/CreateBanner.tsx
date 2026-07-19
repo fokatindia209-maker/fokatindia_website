@@ -10,6 +10,14 @@ import {
 
 const BANNER_TYPES = ["HOME", "CATEGORY", "SERVICE", "OFFER", "GENERAL"];
 
+// Converts a datetime-local value (interpreted in the browser's local
+// timezone) into a UTC "YYYY-MM-DDTHH:mm:ss" string, since the backend
+// stores/compares timestamps as server-local (UTC) LocalDateTime.
+const localInputToUtc = (localValue: string) => {
+  if (!localValue) return "";
+  return new Date(localValue).toISOString().slice(0, 19);
+};
+
 export default function CreateBanner() {
   const navigate = useNavigate();
 
@@ -60,8 +68,8 @@ export default function CreateBanner() {
       data.append("bannerType", form.bannerType);
       data.append("displayOrder", String(form.displayOrder));
       data.append("active", String(form.active));
-      data.append("startDate", form.startDate);
-      data.append("endDate", form.endDate);
+      data.append("startDate", localInputToUtc(form.startDate));
+      data.append("endDate", localInputToUtc(form.endDate));
       data.append("image", file);
 
       const res = await api.post(`/restful/v1/api/banners/create`, data, {

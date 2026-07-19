@@ -11,6 +11,23 @@ import {
 
 const BANNER_TYPES = ["HOME", "CATEGORY", "SERVICE", "OFFER", "GENERAL"];
 
+// Backend stores/compares timestamps as server-local (UTC) LocalDateTime,
+// while datetime-local inputs work in the browser's local timezone.
+
+// UTC "YYYY-MM-DDTHH:mm:ss" (from the backend) -> local "YYYY-MM-DDTHH:mm" (for the input)
+const utcToLocalInput = (utcValue?: string) => {
+  if (!utcValue) return "";
+  const date = new Date(utcValue.endsWith("Z") ? utcValue : `${utcValue}Z`);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+
+// local "YYYY-MM-DDTHH:mm" (from the input) -> UTC "YYYY-MM-DDTHH:mm:ss" (for the backend)
+const localInputToUtc = (localValue: string) => {
+  if (!localValue) return "";
+  return new Date(localValue).toISOString().slice(0, 19);
+};
+
 interface Banner {
   id: number;
   title: string;
@@ -59,8 +76,8 @@ export default function EditBanner() {
 
         setForm({
           ...data,
-          startDate: data.startDate ? data.startDate.slice(0, 16) : "",
-          endDate: data.endDate ? data.endDate.slice(0, 16) : "",
+          startDate: utcToLocalInput(data.startDate),
+          endDate: utcToLocalInput(data.endDate),
         });
       } catch (err) {
         console.error("Error fetching banner", err);
@@ -86,8 +103,8 @@ export default function EditBanner() {
       formData.append("bannerType", form.bannerType ?? "HOME");
       formData.append("displayOrder", String(form.displayOrder ?? 0));
       formData.append("active", form.active ? "true" : "false");
-      formData.append("startDate", form.startDate ?? "");
-      formData.append("endDate", form.endDate ?? "");
+      formData.append("startDate", localInputToUtc(form.startDate ?? ""));
+      formData.append("endDate", localInputToUtc(form.endDate ?? ""));
 
       if (file) formData.append("image", file);
 

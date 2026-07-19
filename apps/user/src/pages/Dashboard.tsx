@@ -6,6 +6,7 @@ import {
   Clock,
   Sparkles,
   ChevronRight,
+  ChevronLeft,
   MapPin,
   ShieldCheck,
 } from "lucide-react";
@@ -17,6 +18,16 @@ interface Category {
   name: string;
   imageUrl: string;
   description: string;
+}
+
+interface Banner {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+  redirectUrl: string;
+  bannerType: string;
+  displayOrder: number;
 }
 
 interface Service {
@@ -34,7 +45,7 @@ interface Service {
 
 function CategorySkeleton() {
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
       {Array.from({ length: 6 }).map((_, i) => (
         <div key={i} className="rounded-xl bg-white shadow p-3 animate-pulse">
           <div className="aspect-square w-full rounded-lg bg-gray-200" />
@@ -86,10 +97,44 @@ export default function Dashboard() {
   const [loadingServices, setLoadingServices] = useState(true);
   const [nearbyVendors, setNearbyVendors] = useState<any[]>([]);
   const [loadingVendors, setLoadingVendors] = useState(true);
+  const [banners, setBanners] = useState<Banner[]>([]);
+  const [activeBanner, setActiveBanner] = useState(0);
+
   useEffect(() => {
     fetchCategories();
     fetchServices();
+    fetchBanners();
   }, []);
+
+  // Auto-rotate banners every 4s
+  useEffect(() => {
+    if (banners.length < 2) return;
+
+    const timer = setInterval(() => {
+      setActiveBanner((prev) => (prev + 1) % banners.length);
+    }, 4000);
+
+    return () => clearInterval(timer);
+  }, [banners.length]);
+
+  const fetchBanners = async () => {
+    try {
+      const res = await api.get("/banners/active");
+      setBanners(res.data.data || []);
+    } catch (error) {
+      console.error("Failed to load banners", error);
+    }
+  };
+
+  const openBanner = (banner: Banner) => {
+    if (!banner.redirectUrl) return;
+
+    if (banner.redirectUrl.startsWith("/")) {
+      navigate(banner.redirectUrl);
+    } else {
+      window.open(banner.redirectUrl, "_blank");
+    }
+  };
 
   const lat = 25.2048;
   const lng = 55.2708;
@@ -180,34 +225,109 @@ export default function Dashboard() {
         </button>
 
         {/* ================= MAIN BANNER ================= */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow">
-          <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10" />
-          <div className="absolute -right-2 bottom-0 w-20 h-20 rounded-full bg-white/10" />
+        {banners.length > 0 ? (
+          <div className="relative overflow-hidden rounded-2xl shadow">
+            <div
+              className="flex transition-transform duration-500 ease-out"
+              style={{ transform: `translateX(-${activeBanner * 100}%)` }}
+            >
+              {banners.map((banner) => (
+                <div
+                  key={banner.id}
+                  onClick={() => openBanner(banner)}
+                  className="relative w-full shrink-0 cursor-pointer"
+                >
+                  <img
+                    src={banner.imageUrl}
+                    alt={banner.title}
+                    className="w-full aspect-[16/9] object-cover"
+                  />
 
-          <div className="relative flex items-center justify-between gap-4">
-            <div className="min-w-0">
-              <h1 className="text-2xl font-bold leading-snug">
-                Home Services at Your Doorstep
-              </h1>
-              <p className="text-sm mt-2 opacity-90">
-                Trusted professionals, instant booking
-              </p>
-
-              <button
-                onClick={() => navigate("/categories")}
-                className="mt-4 bg-white text-blue-700 font-semibold text-sm px-4 py-2 rounded-lg shadow hover:bg-blue-50 transition"
-              >
-                Book a Service
-              </button>
+                  {(banner.title || banner.description) && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 flex flex-col justify-end p-4">
+                      {banner.title && (
+                        <h2 className="text-white font-bold text-lg leading-snug">
+                          {banner.title}
+                        </h2>
+                      )}
+                      {banner.description && (
+                        <p className="text-white/90 text-xs mt-1">
+                          {banner.description}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
 
-            <img
-              src={heroImage}
-              alt=""
-              className="w-24 h-24 object-contain shrink-0 hidden xs:block"
-            />
+            {banners.length > 1 && (
+              <>
+                <button
+                  onClick={() =>
+                    setActiveBanner(
+                      (activeBanner - 1 + banners.length) % banners.length
+                    )
+                  }
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 text-white rounded-full p-1 hover:bg-black/50 transition"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+
+                <button
+                  onClick={() =>
+                    setActiveBanner((activeBanner + 1) % banners.length)
+                  }
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 text-white rounded-full p-1 hover:bg-black/50 transition"
+                >
+                  <ChevronRight size={18} />
+                </button>
+
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  {banners.map((_, i) => (
+                    <span
+                      key={i}
+                      className={`h-1.5 rounded-full transition-all ${
+                        i === activeBanner
+                          ? "w-4 bg-white"
+                          : "w-1.5 bg-white/50"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
-        </div>
+        ) : (
+          <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow">
+            <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10" />
+            <div className="absolute -right-2 bottom-0 w-20 h-20 rounded-full bg-white/10" />
+
+            <div className="relative flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <h1 className="text-2xl font-bold leading-snug">
+                  Home Services at Your Doorstep
+                </h1>
+                <p className="text-sm mt-2 opacity-90">
+                  Trusted professionals, instant booking
+                </p>
+
+                <button
+                  onClick={() => navigate("/categories")}
+                  className="mt-4 bg-white text-blue-700 font-semibold text-sm px-4 py-2 rounded-lg shadow hover:bg-blue-50 transition"
+                >
+                  Book a Service
+                </button>
+              </div>
+
+              <img
+                src={heroImage}
+                alt=""
+                className="w-24 h-24 object-contain shrink-0 hidden xs:block"
+              />
+            </div>
+          </div>
+        )}
 
         {/* ================= OFFER + STATUS ================= */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -249,7 +369,7 @@ export default function Dashboard() {
               No categories available right now
             </p>
           ) : (
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
               {categories.map((item) => (
                 <div
                   key={item.id}
