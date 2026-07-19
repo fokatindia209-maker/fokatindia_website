@@ -22,6 +22,7 @@ import {
   UserCog,
   ShieldCheck,
   LogOut,
+  Image,
 } from "lucide-react";
 
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -131,6 +132,12 @@ export default function Sidebar({
       title: "Services",
       icon: FolderLock,
       path: "/services",
+    },
+
+    {
+      title: "Banners",
+      icon: Image,
+      path: "/banners",
     },
 
     {

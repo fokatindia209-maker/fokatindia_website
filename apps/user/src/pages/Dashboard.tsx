@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import api from "../api/axios";
+import heroImage from "../assets/hero.png";
 interface Category {
   id: number;
   name: string;
@@ -183,20 +184,28 @@ export default function Dashboard() {
           <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10" />
           <div className="absolute -right-2 bottom-0 w-20 h-20 rounded-full bg-white/10" />
 
-          <div className="relative">
-            <h1 className="text-2xl font-bold leading-snug">
-              Home Services at Your Doorstep
-            </h1>
-            <p className="text-sm mt-2 opacity-90">
-              Trusted professionals, instant booking
-            </p>
+          <div className="relative flex items-center justify-between gap-4">
+            <div className="min-w-0">
+              <h1 className="text-2xl font-bold leading-snug">
+                Home Services at Your Doorstep
+              </h1>
+              <p className="text-sm mt-2 opacity-90">
+                Trusted professionals, instant booking
+              </p>
 
-            <button
-              onClick={() => navigate("/categories")}
-              className="mt-4 bg-white text-blue-700 font-semibold text-sm px-4 py-2 rounded-lg shadow hover:bg-blue-50 transition"
-            >
-              Book a Service
-            </button>
+              <button
+                onClick={() => navigate("/categories")}
+                className="mt-4 bg-white text-blue-700 font-semibold text-sm px-4 py-2 rounded-lg shadow hover:bg-blue-50 transition"
+              >
+                Book a Service
+              </button>
+            </div>
+
+            <img
+              src={heroImage}
+              alt=""
+              className="w-24 h-24 object-contain shrink-0 hidden xs:block"
+            />
           </div>
         </div>
 

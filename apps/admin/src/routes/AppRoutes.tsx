@@ -83,6 +83,9 @@ import EditNotification from "../pages/notifications/EditNotifications";
 import ReviewList from "../pages/reviews/ReviewList";
 import CreateReview from "../pages/reviews/CreateReview";
 import EditReview from "../pages/reviews/EditReview";
+import BannerList from "../pages/banners/BannerList";
+import CreateBanner from "../pages/banners/CreateBanner";
+import EditBanner from "../pages/banners/EditBanner";
 
 export default function AppRoutes() {
   // REDUX
@@ -377,6 +380,21 @@ export default function AppRoutes() {
           <Route
             path="/categories/create"
             element={<CreateCategory />}
+          />
+
+          <Route
+            path="/banners"
+            element={<BannerList />}
+          />
+
+          <Route
+            path="/banners/edit/:id"
+            element={<EditBanner />}
+          />
+
+          <Route
+            path="/banners/create"
+            element={<CreateBanner />}
           />
 
           <Route
